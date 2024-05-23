@@ -1,29 +1,53 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
-const dotenv = require('dotenv');
 
-dotenv.config();
+let client;
 
-const uri = process.env.DATABASE_URI;
-const client = new MongoClient(uri,  {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
+module.exports.connectToDatabase = async (username, password, clusterName, appName) => {
+
+    if (client) {
+        return client;
     }
-}
-);
 
-async function run() {
+    const uri = `mongodb+srv://${username}:${password}@${clusterName}.jwscxvu.mongodb.net/?retryWrites=true&w=majority&appName=${appName}`;
+    client = new MongoClient(uri, {
+        serverApi: {
+            version: ServerApiVersion.v1,
+            strict: true,
+            deprecationErrors: true,
+        }
+    });
+
+
     try {
-      // Connect the client to the server (optional starting in v4.7)
-      await client.connect();
-      // Send a ping to confirm a successful connection
-      await client.db("admin").command({ ping: 1 });
-      console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    } finally {
-      // Ensures that the client will close when you finish/error
-      await client.close();
-    }
+        await client.connect();
+        console.log("connected successfully to the server");
+        return client;
+    } catch (error) {
+        throw new Error(error);
+    } 
+    // finally {
+    //     await client.close();
+    //     console.log("connection to client has closed");
+    // }
+
 }
 
-module.exports = run;
+module.exports.getDatabase = async () => {
+    if (!client) {
+        return await client.db("at-file_server");
+        // throw new Error("Client is not connected!. Make sure to connect to database first!");
+    }
+
+    return client.db("at-file_server");
+}
+
+module.exports.closeDatabaseConnection = async () => {
+    try {
+        await client.close();
+        console.log("connection successfully closed!");
+        return 0;
+    }
+    catch(error) {
+        throw new Error("Failed to close connection to client");
+    }
+}
