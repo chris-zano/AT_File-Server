@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,59 +9,90 @@
     <link rel="stylesheet" href="/files/css/root/signin.css">
     <title>AT-FS: (Signin)</title>
 </head>
+
 <body>
 
-    <div class="form-container username-form-container" id="username-form-container">
-        <form action="/users/signin" id="signin-form-signin-with-username" class="login-form">
-            <div class="form-header">
-                <h2>Sign in </h2>
-            </div>
-            <button type="button" class="sign-in-with-email-btn" id="sign-in-with-email-btn">Sign up with Email</button>
-            <div class="separator">
-                <span>OR</span>
-            </div>
-            <div class="input-group">
-                <label for="username">Username: </label>
-                <input type="text" name="username" id="username" required>
-            </div>
-    
-            <div class="input-group">
-                <label for="password">Password: </label>
-                <input type="password" name="password" id="password" required>
-            </div>
-    
-            <div class="input-group">
-                <a href="/users/forgot-password/password/reset/">Forgot password?</a>
-            </div>
-    
-            <div class="input-group">
-               <button type="submit" class="signin-btn">Sign in</button>
-            </div>
-        </form>
-    </div>
+    <main class="container-main" id="container-main">
+        <div class="form-container username-form-container" id="username-form-container">
+            <form action="/users/signin" id="signin-form-signin-with-username" class="login-form">
+                <div class="form-header">
+                    <h2>Sign in </h2>
+                </div>
+                <button type="button" class="sign-in-with-email-btn" id="sign-in-with-email-btn">Sign up with
+                    Email</button>
+                <div class="separator">
+                    <span>OR</span>
+                </div>
+                <div class="input-group">
+                    <label for="username">Username: </label>
+                    <input type="text" name="username" id="username" required>
+                </div>
 
-    <div class="form-container username-form-container hidden" id="email-form-container">
-        <form action="/users/signin" id="signin-form-signup" class="login-form">
-            <div class="form-header">
-                <h2>Sign up</h2>
-            </div>
-            <button type="button" class="sign-in-with-username-btn" id="sign-in-with-username-btn">Sign in with username</button>
-            <div class="separator">
-                <span>OR</span>
-            </div>
-            <div class="input-group">
-                <label for="email">Email: </label>
-                <input type="email" name="email" id="email" required>
-            </div>
-            <div class="input-group">
-               <button type="submit" class="signin-btn">Continue</button>
-            </div>
-        </form>
-    </div>
+                <div class="input-group">
+                    <label for="password">Password: </label>
+                    <input type="password" name="password" id="password" required>
+                </div>
 
-    
+                <div class="input-group">
+                    <a href="/users/forgot-password/password/reset/">Forgot password?</a>
+                </div>
+
+                <div class="input-group">
+                    <button type="submit" class="signin-btn">Sign in</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-container username-form-container hidden" id="email-form-container">
+            <form action="/users/signin" id="signin-form-signup" class="login-form">
+                <div class="form-header">
+                    <h2>Sign up</h2>
+                </div>
+                <button type="button" class="sign-in-with-username-btn" id="sign-in-with-username-btn">Sign in with
+                    username</button>
+                <div class="separator">
+                    <span>OR</span>
+                </div>
+                <div class="input-group">
+                    <label for="email">Email: </label>
+                    <input type="email" name="email" id="email" required>
+                </div>
+                <div class="input-group">
+                    <button type="submit" class="signin-btn" id="signup-btn">Continue</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+
+
     <script src="/files/scripts/system/system.notification.js"></script>
     <script src="/files/scripts/system/system.utils.js"></script>
+    <script>
+        const signInWithEmailBtn = getId("sign-in-with-email-btn");
+        const signInWithUsernameBtn = getId("sign-in-with-username-btn");
+
+        signInWithEmailBtn.addEventListener("click", (e) => {
+            const emailFormContainer = getId("email-form-container");
+            const usernameFormContainer = getId("username-form-container");
+
+            if (emailFormContainer.classList.contains("hidden")) {
+                usernameFormContainer.classList.add("hidden");
+                emailFormContainer.classList.remove("hidden");
+            }
+        });
+
+        signInWithUsernameBtn.addEventListener("click", (e) => {
+            const emailFormContainer = getId("email-form-container");
+            const usernameFormContainer = getId("username-form-container");
+
+            if (usernameFormContainer.classList.contains("hidden")) {
+                emailFormContainer.classList.add("hidden");
+                usernameFormContainer.classList.remove("hidden");
+            }
+        });
+    </script>
     <script src="/files/scripts/system/system.signin.js"></script>
 </body>
+
 </html>

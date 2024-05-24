@@ -136,6 +136,43 @@
     background-color: #000000;
 }
 
+.code-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #0000009f;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.code-btn.enabled {
+    background-color: #000000;
+}
+.code-btn.enabled:hover {
+    background-color: transparent;
+    color: #000000;
+    border-color: #0000009f;
+}
+.password-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #0000009f;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.password-btn.enabled {
+    background-color: #000000;
+}
+.password-btn.enabled:hover {
+    background-color: transparent;
+    color: #000000;
+    border-color: #0000009f;
+}
+
 .signup-link {
     text-align: center;
     margin-top: 15px;

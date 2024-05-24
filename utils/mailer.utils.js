@@ -6,8 +6,8 @@ require('dotenv').config();
 
 const EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-const system_email = process.env.SYSTEM_EMAIL;
-const system_email_password = process.env.SYSTEM_EMAIL_PASSWORD;
+const system_email ="no-reply.atfs@hotmail.com";
+const system_email_password = "noreplyPassword@1234"
 
 const generateVerificationCode = () => {
     return randomstring.generate({

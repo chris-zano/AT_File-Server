@@ -21,7 +21,7 @@ const initiatePostRequest = async (url= "", options = {}) => {
 
 const initiateGetRequest = async (url= "") => {
     if (!url) {
-        return {status: 400, doc: {}};
+        return {status: 400, doc: {} };
     }
 
     const response = await fetch(`${url.trim()}`);

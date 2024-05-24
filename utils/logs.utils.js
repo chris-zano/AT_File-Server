@@ -2,6 +2,21 @@ const path = require('path');
 const fs = require('fs');
 const { MongooseError } = require('mongoose');
 
+function addSuperscript(num) {
+    const j = num % 10,
+        k = num % 100;
+    if (j === 1 && k !== 11) {
+        return num + "st";
+    }
+    if (j === 2 && k !== 12) {
+        return num + "nd";
+    }
+    if (j === 3 && k !== 13) {
+        return num + "rd";
+    }
+    return num + "th";
+}
+
 module.exports.logError = (error, url, callFunction) => {
     if (error instanceof MongooseError) {
         const eMes = new MongooseError(error.message);
@@ -36,21 +51,6 @@ module.exports.logError = (error, url, callFunction) => {
 };
 
 module.exports.logSession = (username, ip, status = "") => {
-
-    function addSuperscript(num) {
-        const j = num % 10,
-            k = num % 100;
-        if (j === 1 && k !== 11) {
-            return num + "st";
-        }
-        if (j === 2 && k !== 12) {
-            return num + "nd";
-        }
-        if (j === 3 && k !== 13) {
-            return num + "rd";
-        }
-        return num + "th";
-    }
 
     try {
         const logFilePath = path.join(__dirname, '..', 'logs', 'session.log');
