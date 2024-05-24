@@ -29,10 +29,7 @@ const uri = `mongodb+srv://${username}:${password}@${clusterName}.jwscxvu.mongod
 //Connect to Database and start server
 (async () => {
     try {
-        await mongoose.connect(uri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        await mongoose.connect(uri);
         console.log('Connected to MongoDB Atlas');
 
         // Call and execute require stack
