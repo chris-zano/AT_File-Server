@@ -4,46 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="/files/favicon/" type="image/x-icon">
+    <link rel="stylesheet" href="/files/css/root/root.css">
+    <link rel="stylesheet" href="/files/css/root/signin.css">
     <title>AT-FS: (Signin)</title>
 </head>
 <body>
-    <div class="form-container username-form-container">
-        <form action="/users/signin" id="signin-form-signin-with-username">
+
+    <div class="form-container username-form-container" id="username-form-container">
+        <form action="/users/signin" id="signin-form-signin-with-username" class="login-form">
             <div class="form-header">
-                <h2>Sign in with username and password</h2>
+                <h2>Sign in </h2>
             </div>
-            <div>
+            <button type="button" class="sign-in-with-email-btn" id="sign-in-with-email-btn">Sign up with Email</button>
+            <div class="separator">
+                <span>OR</span>
+            </div>
+            <div class="input-group">
                 <label for="username">Username: </label>
                 <input type="text" name="username" id="username" required>
             </div>
     
-            <div>
+            <div class="input-group">
                 <label for="password">Password: </label>
                 <input type="password" name="password" id="password" required>
             </div>
     
-            <div>
+            <div class="input-group">
                 <a href="/users/forgot-password/password/reset/">Forgot password?</a>
             </div>
     
-            <div>
-                <input type="submit" value="Signin">
+            <div class="input-group">
+               <button type="submit" class="signin-btn">Sign in</button>
             </div>
         </form>
     </div>
 
-    <div class="form-container email-form-container">
-        <form action="/users/signin" id="signin-form-signin-with-email">
+    <div class="form-container username-form-container hidden" id="email-form-container">
+        <form action="/users/signin" id="signin-form-signup" class="login-form">
             <div class="form-header">
-                <h2>Sign in with email</h2>
+                <h2>Sign up</h2>
             </div>
-            <div>
+            <button type="button" class="sign-in-with-username-btn" id="sign-in-with-username-btn">Sign in with username</button>
+            <div class="separator">
+                <span>OR</span>
+            </div>
+            <div class="input-group">
                 <label for="email">Email: </label>
                 <input type="email" name="email" id="email" required>
             </div>
-    
-            <div>
-                <input type="submit" value="Signin">
+            <div class="input-group">
+               <button type="submit" class="signin-btn">Continue</button>
             </div>
         </form>
     </div>

@@ -1,0 +1,34 @@
+@font-face {
+    font-family: "font-default";
+    src: url('/files/typeface/RedditMono-Regular.ttf');
+}
+
+:root {
+    --text: #0b0c15;
+    --background: #f4f5fb;
+    --primary: #032dfc;
+    --secondary: #00b108;
+    --accent: #a51901;
+    --font-default: "font-default";
+
+
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-default);
+}
+
+body {
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.hidden {
+    display: none;
+}

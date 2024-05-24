@@ -34,3 +34,4 @@ const initiateGetRequest = async (url= "") => {
 const getId = (id) => {
     return document.getElementById(id);
 }
+
