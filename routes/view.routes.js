@@ -4,6 +4,6 @@ const router = express.Router();
 
 router.get('/', renderGettinStartedPage);
 router.get('/signin', renderSigninPage);
-router.get('/store', renderCustomerStore);
+// router.get('/store', renderCustomerStore);
 
 module.exports = router;
