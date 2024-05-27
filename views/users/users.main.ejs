@@ -3,11 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/files/favicon/" type="image/x-icon">
+    <link rel="stylesheet" href="/files/css/root/root.css">
+    <% for( let stylesheet_url of stylesheets_urls) { %>
+    <link rel="stylesheet" href="<%= stylesheet_url %>">
+    <% } %>
     <title>(AT-FS): Store</title>
 </head>
 <body>
-    <header>Header here</header>
-    <main>Main here</main>
-    <footer>Footer here</footer>
+    <%- include('templates/user.header.ejs') %>
+    
+    <main>
+        <% if (pageUrl === "home") { %>
+            <%- include('layouts/user.home.ejs') %>
+        <% } else if (pageUrl === "uploads") { %>
+            <%- include('layouts/user.upload.ejs') %>
+        <% } else if (pageUrl === "settings") { %>
+            <%- include('layouts/user.settings.ejs') %>
+        <% } else if (pageUrl === "profile") { %>
+            <%- include('layouts/user.profile.ejs') %>
+        <% } %>%>
+    </main>
+
+    <%- include('templates/user.scripts.ejs') %>
 </body>
 </html>

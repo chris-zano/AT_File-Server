@@ -6,9 +6,6 @@ const router = express.Router();
 router.get("/system/verify-user/:permissions/:id", async (req, res) => {
     const { permissions, id } = req.params;
 
-    console.log(permissions)
-    console.log(id)
-
     if (!permissions || !id) {
         res.status(400).json({messaage: "Invalid request"});
         return;
