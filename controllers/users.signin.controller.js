@@ -1,7 +1,8 @@
 const { Customers, Codes } = require("../utils/db.exports.utils");
 const { logSession, logError } = require("../utils/logs.utils");
-const { sendVerificationCode } = require("../utils/mailer.utils");
+const { sendVerificationCode, emailRegexp } = require("../utils/mailer.utils");
 const { hashPassword, comparePassword } = require("../utils/password.utils");
+const email_Regex = emailRegexp();
 const Customer = Customers();
 const Code = Codes();
 
@@ -15,7 +16,13 @@ module.exports.authenticateWithUsernameAndPassword = async (req, res) => {
         return;
     }
 
-    const userMatch = await Customer.findOne({ username: username });
+    let userMatch;
+    if (email_Regex.test(username)) {
+        userMatch = await Customer.findOne({ email: username });
+    }
+    else {
+        userMatch = await Customer.findOne({ username: username });
+    }
 
     if (!userMatch) {
         logSession(username, req.ip, "Failed");

@@ -146,7 +146,6 @@ const renderVerificationForm = (codeId) => {
 }
 
 const signinMain = () => {
-    console.log(`/store/${encodeURIComponent("user="+ "hello")}`)
     const signinForm = getId("signin-form-signin-with-username");
     signinForm.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -156,7 +155,12 @@ const signinMain = () => {
 
         // console.log({ username, password });
         const res = await signIn(username, password);
-        console.log(res);
+        if (res.message === "success") {
+            sessionStorage.setItem("session-user", JSON.stringify(res.user));
+            const endPoint = `user=${res.user._id}`;
+            console.log(endPoint);
+            window.location.href =`/users/store/${endPoint}`;
+        }
     });
 
     const signupForm = getId("signin-form-signup");

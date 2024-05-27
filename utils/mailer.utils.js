@@ -6,6 +6,10 @@ require('dotenv').config();
 
 const EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
+module.exports.emailRegexp = () => {
+    return EMAIL_REGEXP;
+}
+
 const system_email ="no-reply.atfs@hotmail.com";
 const system_email_password = "noreplyPassword@1234"
 

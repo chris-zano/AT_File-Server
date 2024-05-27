@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.get('/', renderGettinStartedPage);
 router.get('/signin', renderSigninPage);
-router.get('/store/user=:id', usersVerifyUtils.verifyUserbyId, renderStoreForUsers);
+router.get('/users/store/user=:id', usersVerifyUtils.verifyUserbyId, renderStoreForUsers);
 
 module.exports = router;

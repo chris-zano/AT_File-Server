@@ -41,7 +41,7 @@ const uri = `mongodb+srv://${username}:${password}@${clusterName}.jwscxvu.mongod
         });
 
     } catch (error) {
-        console.error('Error connecting to MongoDB Atlas:');
+        console.error('Error connecting to MongoDB Atlas: ');
         mongoose.connect("mongodb://localhost:27017/at_File_Server").then(() => {
             console.log("Connected to local");
             require('./requireStack').callAndExecuteRequireStack(app);
