@@ -5,9 +5,11 @@ const callAndExecuteRequireStack = (app) => {
      const fileRoutes = require('./routes/files.routes');
      const AdminSigninRoutes = require("./routes/admin-signin.routes");
      const CustomerSigninRoutes = require("./routes/customer-signin.routes");
+     const authRoutes = require('./routes/auth.routes');
 
 
      //use routes here
+     app.use(authRoutes);
      app.use(adminViewRoutes);
      app.use(customerViewRoutes);
      app.use(fileRoutes);
