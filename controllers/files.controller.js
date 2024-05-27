@@ -1,11 +1,11 @@
 const fs = require("fs");
 const path = require("path");
 
-module.exports.serveSystemScripts = (req, res) => {
+module.exports.serveScripts = (req, res) => {
     if (req.params.filename) {
-        const systemScriptFilePath = path.join(__dirname, "..", "public", "js", "system", req.params.filename);
+        const scriptFilePath = path.join(__dirname, "..", "public", "js", req.params.directory, req.params.filename);
 
-        if (!(fs.existsSync(systemScriptFilePath))) {
+        if (!(fs.existsSync(scriptFilePath))) {
             res.status(404).end();
             return;
         }
@@ -13,27 +13,7 @@ module.exports.serveSystemScripts = (req, res) => {
         res.type("text/javascript");
         // res.set("Cache-Control", "public, max-age=10");
         res.status(200);
-        fs.createReadStream(systemScriptFilePath).pipe(res);
-    }
-    else {
-        res.status(404).end();
-        return;
-    }
-}
-
-module.exports.serveClientScripts = (req, res) => {
-    if (req.params.filename) {
-        const clientScriptFilePath = path.join(__dirname, "..", "public", "js", "client", req.params.filename);
-
-        if (!(fs.existsSync(clientScriptFilePath))) {
-            res.status(404).end();
-            return;
-        }
-
-        res.type("text/javascript");
-        // res.set("Cache-Control", "public, max-age=10");
-        res.status(200);
-        fs.createReadStream(clientScriptFilePath).pipe(res);
+        fs.createReadStream(scriptFilePath).pipe(res);
     }
     else {
         res.status(404).end();

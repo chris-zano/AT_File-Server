@@ -40,7 +40,39 @@ module.exports.renderStoreForUsers = async (req, res) => {
         {
             pageUrl: "home",
             scripts_urls: [],
-            stylesheets_urls: ["/files/css/users/users.css", "/files/css/users/store.css"]
+            stylesheets_urls: ["/files/css/users/users.css", "/files/css/users/store.css"],
+            files: [
+                {
+                    type: "image",
+                    thumbnailUrl: "/files/favicon",
+                    title: "This is a new brthday card image",
+                    description: "This is the description of a birthday description"
+                },
+                {
+                    type: "image",
+                    thumbnailUrl: "/files/favicon",
+                    title: "This is a new brthday card image",
+                    description: "This is the description of a birthday description"
+                },
+                {
+                    type: "image",
+                    thumbnailUrl: "/files/favicon",
+                    title: "This is a new brthday card image",
+                    description: "This is the description of a birthday description"
+                },
+                {
+                    type: "image",
+                    thumbnailUrl: "/files/favicon",
+                    title: "This is a new brthday card image",
+                    description: "This is the description of a birthday description"
+                },
+                {
+                    type: "image",
+                    thumbnailUrl: "/files/favicon",
+                    title: "This is a new brthday card image",
+                    description: "This is the description of a birthday description"
+                }
+            ]
         }
     );
 }

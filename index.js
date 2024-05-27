@@ -1,10 +1,15 @@
 const express = require('express');
+const http = require('http');
+
 const path = require("path");
 const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
 require('dotenv').config();
 
 const app = express();
+const server = http.createServer(app); 
+
+
 const STATIC_FILES_PATH = path.join(__dirname, "public");
 const VIEW_ENGINE_TEMPLATES_PATH = path.join(__dirname, "views");
 
@@ -33,10 +38,10 @@ const uri = `mongodb+srv://${username}:${password}@${clusterName}.jwscxvu.mongod
         console.log('Connected to MongoDB Atlas');
 
         // Call and execute require stack
-        require('./requireStack').callAndExecuteRequireStack(app);
-
+        require('./requireStack').callAndExecuteRequireStack(app, server);
+        
         const PORT = process.env.PORT || 8080;
-        app.listen(PORT, () => {
+        server.listen(PORT, () => {
             console.log(`App is live at http://localhost:${PORT}`);
         });
 

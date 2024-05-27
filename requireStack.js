@@ -1,4 +1,7 @@
-const callAndExecuteRequireStack = (app) => {
+const setupWebSocketServer = require('./utils/socket.utils');
+
+const callAndExecuteRequireStack = (app, server) => {
+     const io = setupWebSocketServer(server);
      //require routes here
      const adminViewRoutes = require('./routes/admin-view.routes');
      const customerViewRoutes = require('./routes/customer-view.routes');

@@ -1,1 +1,27 @@
-This is the Customer store (Home).
+<main class="store-container">
+    <h1>Store</h1>
+    <div class="files-grid">
+        <% for (let file of files) { %>
+        <div class="file-card">
+            <div class="thumbnail">
+                <% if (file.type === 'image') { %>
+                    <img src="<%= file.thumbnailUrl %>" alt="<%= file.title %>">
+                <% } else if (file.type === 'pdf') { %>
+                    <img src="/files/images/pdf-thumbnail.png" alt="PDF Thumbnail">
+                <% } else if (file.type === 'doc') { %>
+                    <img src="/files/images/doc-thumbnail.png" alt="Document Thumbnail">
+                <% } %>
+            </div>
+            <div class="file-info">
+                <h3><%= file.title %></h3>
+                <p><%= file.description %></p>
+            </div>
+            <div class="file-actions">
+                <button class="favorite-btn">Add to Favorites</button>
+                <button class="download-btn">Download</button>
+                <button class="share-btn">Share</button>
+            </div>
+        </div>
+        <% } %>
+    </div>
+</main>
