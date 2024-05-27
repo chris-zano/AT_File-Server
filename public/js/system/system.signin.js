@@ -1,47 +1,3 @@
-const verificationCodeForm = `
-    <div class="form-container verification-code-form-container" id="code-form-container">
-        <form action="/users/verify-code" id="code-form-signup" class="login-form">
-            <div class="form-header">
-                <h2>Verify Email</h2>
-            </div>
-            <br>
-            <div>
-                <small>&#9432; An email with verification code has been sent to you.</small>
-                <br>
-                
-            </div>
-            <br>
-            <div class="input-group">
-                <label for="email">Enter verification code: </label>
-                <input type="text" name="code" id="code" required>
-            </div>
-            <div class="input-group">
-                <button type="submit" class="code-btn" id="code-btn" disabled>Verify</button>
-            </div>
-            <small style="font-size: 10px;">&#9432; If you cannot find it, kindly check your spam folder</small>
-            <small style=font-size: 13px; text-decoration: underline; color: navy; id="resend-code" class="hidden">Resend Code</small>
-        </form>
-    </div>
-`;
-
-const addPasswordForm = `
-    <div class="form-container verification-code-form-container" id="password-form-container">
-        <form action="/users/verify-code" id="password-form-signup" class="login-form">
-            <div class="form-header">
-                <h2>Secure your account</h2>
-            </div>
-            <br>
-            <br>
-            <div class="input-group">
-                <label for="email">create a password: </label>
-                <input type="password" name="user_password" id="password_input" required>
-            </div>
-            <div class="input-group">
-                <button type="submit" class="password-btn" id="password-btn" disabled>Confirm</button>
-            </div>
-        </form>
-    </div>
-`
 const signIn = async (username = "", password = "") => {
     const request_options = { username, password };
     const postSigninURL = '/users/login';
@@ -162,7 +118,7 @@ const renderVerificationForm = (codeId) => {
                                 else {
                                     const res = await signupWithEmailAndPassword(email, user_input);
                                     window.sessionStorage.setItem("user_data", JSON.stringify(res.user));
-                                    location.href = "/store";
+                                    location.href = `/store/${encodeURIComponent("user="+res.user.id)}`;
                                 }
                             });
                         }
@@ -190,6 +146,7 @@ const renderVerificationForm = (codeId) => {
 }
 
 const signinMain = () => {
+    console.log(`/store/${encodeURIComponent("user="+ "hello")}`)
     const signinForm = getId("signin-form-signin-with-username");
     signinForm.addEventListener("submit", async (e) => {
         e.preventDefault();
