@@ -15,7 +15,13 @@ module.exports.authenticateAdminLogin = async (req, res) => {
         return;
     }
 
-    const userMatch = await Admin.findOne({ username: username });
+    let userMatch;
+    if (email_Regex.test(username)) {
+        userMatch = await Admin.findOne({ email: username });
+    }
+    else {
+        userMatch = await Admin.findOne({ username: username });
+    }
 
     if (!userMatch) {
         logSession(username, req.ip, "Failed");
@@ -59,7 +65,7 @@ module.exports.verifyEmail = async (req, res) => {
         return;
 
     } catch (error) {
-        logError(error, "/users/signup/initiate", "initiateSignUpSequence");
+        logError(error, "/admins/signup/initiate", "verifyEmail");
         res.status(500).json({ error: "Failed to send verification code" });
     }
 }
@@ -82,12 +88,14 @@ module.exports.setNewAdminPassword = async (req, res) => {
     try {
         const hashedPassword = await hashPassword(user_password);
 
-        const new_customer = new Admin({ email: email, password: hashedPassword.hashedPassword, password_salt: hashedPassword.salt });
+        const new_admin = new Admin({ email: email, password: hashedPassword.hashedPassword, password_salt: hashedPassword.salt });
 
-        const customer = await new_customer.save();
-        res.status(200).json({ user: { id: customer._id, email: customer.email, username: customer.username, firstName: customer.firstName, lastName: customer.lastName, profilePicURL: customer.profilePicURL, downloads: customer.downloads, mailed: customer.mailed, favourites: customer.favourites } });
+        const admin = await new_admin.save();
+        
+        res.status(200).json({ user: { id: admin._id, email: admin.email, username: admin.username, firstName: admin.firstName, lastName: admin.lastName, profilePicURL: admin.profilePicURL, downloads: admin.downloads, mailed: admin.mailed, favourites: admin.favourites } });
+    
     } catch (error) {
-        logError(error, "/users/signup/set-password", "setNewPassword");
+        logError(error, "/admins/signup/set-password", "setNewAdminPassword");
         res.status(500);
     }
 }

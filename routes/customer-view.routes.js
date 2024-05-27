@@ -3,6 +3,7 @@ const { renderGettinStartedPage, renderSigninPage, renderStoreForUsers } = requi
 const usersVerifyUtils = require("../utils/users.verify.utils");
 const router = express.Router();
 
+//customer views
 router.get('/', renderGettinStartedPage);
 router.get('/signin', renderSigninPage);
 router.get('/users/store/user=:id', usersVerifyUtils.verifyUserbyId, renderStoreForUsers);

@@ -1,14 +1,18 @@
 const callAndExecuteRequireStack = (app) => {
      //require routes here
-     const viewRoutes = require('./routes/view.routes');
+     const adminViewRoutes = require('./routes/admin-view.routes');
+     const customerViewRoutes = require('./routes/customer-view.routes');
      const fileRoutes = require('./routes/files.routes');
-     const signinRoutes = require("./routes/signin.routes");
+     const AdminSigninRoutes = require("./routes/admin-signin.routes");
+     const CustomerSigninRoutes = require("./routes/customer-signin.routes");
 
 
      //use routes here
-     app.use(viewRoutes);
+     app.use(adminViewRoutes);
+     app.use(customerViewRoutes);
      app.use(fileRoutes);
-     app.use(signinRoutes);
+     app.use(AdminSigninRoutes);
+     app.use(CustomerSigninRoutes);
 };
 
 module.exports = {callAndExecuteRequireStack};
