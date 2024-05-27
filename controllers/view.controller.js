@@ -22,7 +22,7 @@ module.exports.renderAminSigninPage = (req, res) => {
     res.type("text/html");
     res.set("Cache-Control", "public, max-age=10");
     res.status(200);
-    res.render('accounts/admin-signin');
+    res.render('admin/admin.main.ejs');
 
 }
 

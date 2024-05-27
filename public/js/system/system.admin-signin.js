@@ -155,10 +155,8 @@ const signinMain = () => {
 
         const res = await signIn(username, password);
         if (res.message === "success") {
-            sessionStorage.setItem("session-user", JSON.stringify(res.user));
-            const endPoint = `user=${res.user._id}`;
-            console.log(endPoint);
-            window.location.href =`/admins/store/${endPoint}`;
+            sessionStorage.setItem("session-admin", JSON.stringify(res.user));
+            window.location.href =`/admin/dashboard/${res.user._id}`;
         }
     });
 

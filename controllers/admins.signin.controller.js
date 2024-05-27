@@ -1,7 +1,8 @@
 const { Admins, Codes } = require("../utils/db.exports.utils");
 const { logSession, logError } = require("../utils/logs.utils");
-const { sendVerificationCode } = require("../utils/mailer.utils");
+const { sendVerificationCode, emailRegexp } = require("../utils/mailer.utils");
 const { hashPassword, comparePassword } = require("../utils/password.utils");
+const email_Regex = emailRegexp();
 const Admin = Admins();
 const Code = Codes();
 
