@@ -23,6 +23,6 @@ module.exports.verifyAdminbyId = async (req, res, next) => {
         return;
     }
 
-    req.verifiedUser = { id: user._id, username: user.username };
+    req.verifiedUser = { id: user._id, username: user.username, profilePicURL: user.profilePicURL, email: user.email };
     next();
 }

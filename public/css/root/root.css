@@ -7,7 +7,7 @@
     --text: #0b0c15;
     --background: #f4f5fb;
     --primary: #032dfc;
-    --secondary: #00b108;
+    --secondary: #03980a;
     --accent: #a51901;
     --font-default: "font-default";
 
@@ -19,6 +19,9 @@
     margin: 0;
     padding: 0;
     font-family: var(--font-default);
+    color: unset;
+    text-decoration: none;
+    list-style: none;
 }
 
 body {
@@ -126,9 +129,24 @@ body {
 }
 
 .admin-header-container .profile {
+    cursor: pointer;
+    background-color: green;
+    
+    margin-top: 10px;
+    padding: 0.3ch 0.8ch;
+    border-radius: 1ch;
+    border: 1px solid green;
+    box-shadow: 0px 3px 3px #111;
+}
+.admin-header-container .profile a {
     display: flex;
     align-items: center;
-    margin-top: 10px;
+
+}
+
+
+.admin-header-container .profile:hover, .admin-header-container .profile:focus {
+    background-color: transparent;
 }
 
 .admin-header-container .profile .profile-image img {
@@ -139,12 +157,11 @@ body {
 }
 
 .admin-header-container .profile .signin-username p {
-    background-color: green;
     margin: 0;
-    width: 10ch; /* Adjust the width as needed */
-    white-space: nowrap; /* Prevents the text from wrapping to the next line */
-    overflow: hidden; /* Ensures that the overflowing text is hidden */
-    text-overflow: ellipsis; /* Displays an ellipsis ('...') to indicate the text is truncated */
+    width: 10ch;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 @media (max-width: 768px) {

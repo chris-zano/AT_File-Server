@@ -22,14 +22,31 @@ module.exports.renderAminSigninPage = (req, res) => {
     res.type("text/html");
     res.set("Cache-Control", "public, max-age=10");
     res.status(200);
-    res.render('admin/admin.main.ejs',
+    res.render('accounts/admin-signin.ejs',
         {
             pageUrl: "uploads",
             scripts_urls: [],
-            stylesheets_urls: ["/files/css/admin/admin.css", "/files/css/admin/uploads.css"]
+            stylesheets_urls: ["/files/css/admin/admin.css"]
         }
     );
 
+}
+
+module.exports.renderAdminViews = (req, res) => {
+    res.type("text/html");
+    res.set("Cache-Control", "public, max-age=10");
+    res.status(200);
+    res.render('admin/admin.main.ejs',
+        {
+            id: req.verifiedUser.id,
+            username: req.verifiedUser.username,
+            profilePicURL: req.verifiedUser.profilePicURL,
+            email: req.verifiedUser.email,
+            pageUrl: req.params.pageUrl,
+            scripts_urls: [],
+            stylesheets_urls: ["/files/css/admin/admin.css", `/files/css/admin/${req.params.pageUrl}.css`]
+        }
+    );
 }
 
 module.exports.renderStoreForUsers = async (req, res) => {

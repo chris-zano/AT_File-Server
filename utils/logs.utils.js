@@ -18,25 +18,8 @@ function addSuperscript(num) {
 }
 
 module.exports.logError = (error, url, callFunction) => {
-    if (error instanceof MongooseError) {
-        const eMes = new MongooseError(error.message);
-        console.error(eMes.stack);
-    }
-    else if (error instanceof ReferenceError) {
-        const eMes = new ReferenceError(error.message)
-        console.error(eMes.stack);
-    }
-    else if (error instanceof SyntaxError) {
-        const eMes = new SyntaxError(error.message);
-        console.error(eMes.stack);
-    }
-    else if (error instanceof TypeError) {
-        const eMes = new TypeError(error.message);
-        console.error(eMes.stack);
-    }
-    else {
-        console.log("An error occured: ", error);
-    }
+    const stackTrace = error.stack;
+    const errorCode = error.code || "Unknown";
 
     const logFilePath = path.join(__dirname, '..', 'logs', 'crash.log');
     const datestamp = this.getSystemDate();
@@ -44,11 +27,13 @@ module.exports.logError = (error, url, callFunction) => {
 
     const logDate = `${datestamp.day},${addSuperscript(datestamp.date)}-${datestamp.month}-${datestamp.year}`;
     const logTime = `${timestamp.hours}:${timestamp.minutes}:${timestamp.seconds}`;
-    const crashLog = `${url}//:: ${logDate} at ${logTime} - CallingFunction:{${callFunction}}, message {${error.message}}\n`;
+
+    const crashLog = `${url}//:: ${logDate} at ${logTime} - CallingFunction:{${callFunction}}, Error Code: {${errorCode}}, message {${error.message}}\n Stack Trace:\n ${stackTrace}\n`;
 
     fs.appendFileSync(logFilePath, crashLog);
     return 0;
 };
+
 
 module.exports.logSession = (username, ip, status = "") => {
 

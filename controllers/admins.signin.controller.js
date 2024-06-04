@@ -50,6 +50,7 @@ module.exports.verifyEmail = async (req, res) => {
     }
 
     const email_exists = await Admin.findOne({ email: email });
+    console.log(email_exists);
 
     if (email_exists) {
         res.status(409).json({ error: "email already in use" });

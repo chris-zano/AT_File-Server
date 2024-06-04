@@ -1,6 +1,7 @@
 const express = require('express');
 const adminsModel = require('../models/admins.model');
 const customersModel = require('../models/customers.model');
+const { logError } = require('../utils/logs.utils');
 const router = express.Router();
 
 router.get("/system/verify-user/:permissions/:id", async (req, res) => {
@@ -12,17 +13,21 @@ router.get("/system/verify-user/:permissions/:id", async (req, res) => {
     }
 
     if (permissions === "admins") {
-        const isAdmin = await adminsModel.findOne({_id: id});
-        if (isAdmin) {
-            res.set("Cache-Control", "public, max-age=3600");
-            res.status(200).json({message: "valid admin"});
+        try {
+            const isAdmin = await adminsModel.findOne({_id: id});
+            if (isAdmin) {
+                res.set("Cache-Control", "public, max-age=3600");
+                res.status(200).json({message: "valid admin"});
+            }
+            else {
+                res.set("Cache-Control", "public, max-age=3600");
+                res.status(404).json({message: "user not found"});
+            }
         }
-        else {
-            res.set("Cache-Control", "public, max-age=3600");
-            res.status(404).json({message: "user not found"});
+        catch(error) {
+            logError(error, `/system/verify-user/${req.params.permissions}/${req.params.id}`, `router.get(req, res)`);
+            res.render("error", {code: "500", message: "The system failed to verify your credentials"});
         }
-
-        return;
     }
 
     else if (permissions === "users") {

@@ -3,6 +3,7 @@ const signIn = async (username = "", password = "") => {
     const postSigninURL = '/admins/login';
     const response = await initiatePostRequest(postSigninURL, request_options);
 
+    console.log(response)
     if (response.status !== 200) {
         Toast_Notification.showError("Invalid username or password");
         return null;
@@ -53,6 +54,7 @@ const signupWithEmailAndPassword = async (email, password) => {
     Toast_Notification.showSuccess("Account creation complete");
     return response.doc;
 }
+
 const renderVerificationForm = (codeId) => {
     let container_main = getId("container-main");
     container_main.innerHTML = "";
@@ -109,8 +111,6 @@ const renderVerificationForm = (codeId) => {
                                 e.preventDefault()
                                 const user_input = container_main.querySelector("#password_input").value;
                                 const email = JSON.parse(window.sessionStorage.getItem("session_email")) || null;
-                                console.log(email)
-                                console.log(window.sessionStorage.getItem("session_email"))
 
                                 if (!email) {
                                     Toast_Notification.showError("An error occured. Please Try again");
@@ -118,14 +118,15 @@ const renderVerificationForm = (codeId) => {
                                 else {
                                     const res = await signupWithEmailAndPassword(email, user_input);
                                     window.sessionStorage.setItem("admin_data", JSON.stringify(res.user));
-                                    location.href = `/admin/dashboard/${res.user.id}`;
+                                    window.sessionStorage.setItem("session-admin", JSON.stringify(res.user.id));
+                                    window.location.replace(`/admin/dashboard/${res.user.id}`);
                                 }
                             });
                         }
                         else {
                             container_main.querySelector("#password-btn").setAttribute("disabled", "true");
                             container_main.querySelector("#password-btn").classList.remove("enabled");
-                            container_main.querySelector("#password-form-container").addEventListener("submit", (e) => e.preventDefault())
+                            container_main.querySelector("#password-form-container").addEventListener("submit", (e) => e.preventDefault());
                         }
                     });
 
@@ -173,9 +174,7 @@ const signinMain = () => {
         const email = getId("email").value;
 
         window.sessionStorage.setItem("session_email", JSON.stringify(email));
-        console.log({ email });
         const res = await signUp(email);
-        console.log(res)
 
         renderVerificationForm(res.id);
     });

@@ -1,0 +1,67 @@
+<section class="section-profile-main">
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>User Profile</h1>
+        </div>
+        <div class="profile-content">
+            <div class="profile-pic">
+                <img src="<%= profilePicURL ? profilePicURL : " /files/system/images/user_blank.png" %>"
+                alt="profile picture">
+                <button onclick="changeProfilePic(event)">Change Profile Picture</button>
+            </div>
+            <script>
+                const changeProfilePic = (e) => {
+                    const id = JSON.parse(window.sessionStorage.getItem("session-admin"));
+
+                    if (!id) {
+                        window.location.replace(`/error/400/${encodeURIComponent("/admin/views/profile/<%= id %>")}/${encodeURIComponent("sessionStorage has id call (session-admin) as " + id)}`);
+                        return;
+                    }
+
+                    const updatePPForm = document.createElement("form");
+                    updatePPForm.method = "post";
+                    updatePPForm.action = `/admins/profile/update-component/profile-picture/${userId}`;
+                    updatePPForm.enctype = "multipart/form-data";
+                    updatePPForm.innerHTML = `
+                            <input type="file" name="profile_picture" required="true" id="file-input">
+                        `;
+                    updatePPForm.style.display = "none";
+                    document.getElementById("profile-main-wrapper").append(updatePPForm);
+
+                    updatePPForm.querySelector("#file-input").click();
+
+                    const fileInput = updatePPForm.querySelector("#file-input")
+                    fileInput.addEventListener("change", async (e) => {
+                        if ((e.target.value)) {
+                            updatePPForm.submit();
+                        }
+                    });
+
+                }
+            </script>
+            <div class="profile-info">
+                <div class="info">
+                    <label for="username">Username:</label>
+                    <p id="username">
+                        <%= username ? username : "admin_001" %>
+                    </p>
+                    <button onclick="changeUsername()">Change Username</button>
+                </div>
+                <div class="info">
+                    <label for="email">Email:</label>
+                    <p id="email">
+                        <%= email %>
+                    </p>
+                    <script>
+                        document.getElementById('email').addEventListener('contextmenu', function (event) {
+                            event.preventDefault();
+                        });
+                    </script>
+                </div>
+                <div class="info">
+                    <button onclick="changePassword()" id="password-btn-ch">Change Password</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

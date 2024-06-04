@@ -8,20 +8,23 @@
     <div class="nav">
         <nav>
             <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Upload</a></li>
-                <li><a href="#">Settings</a></li>
+                <li><a href="/admin/views/dashboard/<%= id %>">Home</a></li>
+                <li><a href="/admin/views/uploads/<%= id %>">Upload</a></li>
+                <li><a href="/admin/views/settings/<%= id %>">Settings</a></li>
             </ul>
         </nav>
     </div>
 
     <div class="profile">
-        <div class="profile-image">
-            <img src="/files/favicon" alt="profile">
-        </div>
-        <div class="signin-username">
-            <p>username012cd458</p>
-        </div>
+        <a href="/admin/views/profile/<%= id %>">
+            <div class="profile-image">
+                <img src="<%= profilePicURL ? profilePicURL : " /files/system/images/user_blank-2.png" %>"
+                alt="profile">
+            </div>
+            <div class="signin-username">
+                <p><%= username ? username : "admin_001" %></p>
+            </div>
+        </a>
     </div>
 
 </header>

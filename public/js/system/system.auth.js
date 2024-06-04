@@ -2,16 +2,13 @@ const verifyUserCredentials = async (user_id, permissions) => {
     const url = `/system/verify-user/${permissions}/${user_id}`;
 
     try {
-        console.log(url);
         const data = await initiateGetRequest(url);
-        console.log(data);
         return data;
-    }catch(error) {
-        console.log(error);
-        return null
+    } catch (error) {
+        window.location.replace(`/error/400/${encodeURIComponent(url)}/${encodeURIComponent(error)}`);
     }
 
-
+    return;
 }
 
 const auth_main = async () => {
@@ -26,15 +23,15 @@ const auth_main = async () => {
 
     else {
         if (userId && !adminId) {
-            response = await verifyUserCredentials(userId._id, "users");
+            response = await verifyUserCredentials(userId, "users");
         }
         else if (!userId && adminId) {
             console.log("here")
-            response = await verifyUserCredentials(adminId._id, "admins");
+            response = await verifyUserCredentials(adminId, "admins");
         }
         else {
-            console.log(adminId);
-            console.log(userId);
+            window.sessionStorage.clear();
+            window.location.href = "/admin/signin";
         }
     }
 
