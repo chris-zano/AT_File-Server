@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
+const DEFAULT_PROFILE_IMAGE = path.resolve(__dirname, "..", "public", "assets", "images", "user_blank.png")
+
 module.exports.serveScripts = (req, res) => {
     if (req.params.filename) {
         const scriptFilePath = path.join(__dirname, "..", "public", "js", req.params.directory, req.params.filename);
@@ -89,6 +91,28 @@ module.exports.serveSystemImages = (req, res) => {
         // res.set('Cache-Control', 'public, max-age=86400');
         res.type('png');
         fs.createReadStream(systemImagesFilePath).pipe(res);
+    }
+    else {
+        res.status(404).end();
+        return;
+    }
+}
+
+module.exports.serveUserProfilePictures = (req, res) => {
+    const { filename } = req.params;
+    if (filename) {
+        const userImagePath = path.join(__dirname, "..", "AT-FS", "images", "profile_pictures", filename);
+
+        if (!(fs.existsSync(userImagePath))) {
+            res.type("png");
+            res.status(404)
+            fs.createReadStream(DEFAULT_PROFILE_IMAGE).pipe(res);
+            return;
+        }
+
+        // res.set('Cache-Control', 'public, max-age=86400');
+        res.type('png');
+        fs.createReadStream(userImagePath).pipe(res);
     }
     else {
         res.status(404).end();

@@ -1,4 +1,4 @@
-<section class="section-profile-main">
+<section class="section-profile-main" id="section-profile-main">
     <div class="profile-container">
         <div class="profile-header">
             <h1>User Profile</h1>
@@ -20,13 +20,13 @@
 
                     const updatePPForm = document.createElement("form");
                     updatePPForm.method = "post";
-                    updatePPForm.action = `/admins/profile/update-component/profile-picture/${userId}`;
+                    updatePPForm.action = `/admins/profile/update-component/profile-picture/${id}`;
                     updatePPForm.enctype = "multipart/form-data";
                     updatePPForm.innerHTML = `
                             <input type="file" name="profile_picture" required="true" id="file-input">
                         `;
                     updatePPForm.style.display = "none";
-                    document.getElementById("profile-main-wrapper").append(updatePPForm);
+                    document.getElementById("section-profile-main").append(updatePPForm);
 
                     updatePPForm.querySelector("#file-input").click();
 
