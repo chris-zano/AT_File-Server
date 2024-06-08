@@ -39,7 +39,8 @@ module.exports.authenticateAdminLogin = async (req, res) => {
     }
 
     logSession(username, req.ip, "Success");
-    res.status(200).json({ message: "success", user: userMatch });
+    const user = { id: userMatch._id, username: userMatch.username, email: userMatch.email, __v: userMatch.__v }
+    res.status(200).json({ message: "success", user });
 }
 
 module.exports.verifyEmail = async (req, res) => {
@@ -93,9 +94,9 @@ module.exports.setNewAdminPassword = async (req, res) => {
         const new_admin = new Admin({ email: email, password: hashedPassword.hashedPassword, password_salt: hashedPassword.salt });
 
         const admin = await new_admin.save();
-        
-        res.status(200).json({ user: { id: admin._id, email: admin.email, username: admin.username, firstName: admin.firstName, lastName: admin.lastName, profilePicURL: admin.profilePicURL, downloads: admin.downloads, mailed: admin.mailed, favourites: admin.favourites } });
-    
+
+        res.status(200).json({ user: { id: admin._id, email: admin.email, username: admin.username, profilePicURL: admin.profilePicURL } });
+
     } catch (error) {
         logError(error, "/admins/signup/set-password", "setNewAdminPassword");
         res.status(500);

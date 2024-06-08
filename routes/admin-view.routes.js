@@ -11,6 +11,6 @@ router.get("/error/:code/:url/:error", (req, res) => {
 
 //admin views
 router.get('/admin/signin', renderAminSigninPage);
-router.get('/admin/views/:pageUrl/:id',usersVerifyUtils.verifyAdminbyId, renderAdminViews);
+router.get('/admin/views/:pageUrl/:id/',usersVerifyUtils.verifyAdminbyId, renderAdminViews);
 
 module.exports = router;

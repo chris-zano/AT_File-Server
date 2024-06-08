@@ -42,6 +42,7 @@ module.exports.renderAdminViews = (req, res) => {
             username: req.verifiedUser.username,
             profilePicURL: req.verifiedUser.profilePicURL,
             email: req.verifiedUser.email,
+            v: req.verifiedUser.v,
             pageUrl: req.params.pageUrl,
             scripts_urls: [],
             stylesheets_urls: ["/files/css/admin/admin.css", `/files/css/admin/${req.params.pageUrl}.css`]

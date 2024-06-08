@@ -1,6 +1,6 @@
 const express = require('express');
 const http = require('http');
-
+const logger = require('morgan');
 const path = require("path");
 const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
@@ -15,6 +15,8 @@ const VIEW_ENGINE_TEMPLATES_PATH = path.join(__dirname, "views");
 
 //Middleware setup
 app.use(bodyParser.json());
+app.use(express.json());
+app.use(logger('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static(STATIC_FILES_PATH));
 

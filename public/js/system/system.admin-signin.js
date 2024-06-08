@@ -119,7 +119,7 @@ const renderVerificationForm = (codeId) => {
                                     const res = await signupWithEmailAndPassword(email, user_input);
                                     window.sessionStorage.setItem("admin_data", JSON.stringify(res.user));
                                     window.sessionStorage.setItem("session-admin", JSON.stringify(res.user.id));
-                                    window.location.replace(`/admin/dashboard/${res.user.id}`);
+                                    window.location.replace(`/admin/views/home/${res.user.id}`);
                                 }
                             });
                         }
@@ -156,8 +156,12 @@ const signinMain = () => {
 
         const res = await signIn(username, password);
         if (res.message === "success") {
-            sessionStorage.setItem("session-admin", JSON.stringify(res.user));
-            window.location.href =`/admin/dashboard/${res.user._id}`;
+            sessionStorage.setItem("admin_data", JSON.stringify(res.user));
+            sessionStorage.setItem("session-admin", JSON.stringify(res.user.id));
+            window.location.replace(`/admin/views/home/${res.user.id}`);
+        }
+        else {
+            console.log(res);
         }
     });
 
