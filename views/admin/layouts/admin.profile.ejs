@@ -89,12 +89,13 @@
                     <button onclick="changePassword(event)" id="password-btn-ch">Change Password</button>
                 </div>
                 <script>
-                    const changePassword = (event) => {
+                    const changePassword = async (event) => {
                         const id = JSON.parse(window.sessionStorage.getItem("session-admin"));
                         const email = JSON.parse(window.sessionStorage.getItem("admin_data")).email;
 
                         try {
-                            window.location.href = `/sessions/admin/password-reset?uid=${encodeURIComponent(id)}&uemail=${encodeURIComponent(email)}`;
+                            const url = `/sessions/admin/password-reset?uid=${encodeURIComponent(id)}&uemail=${encodeURIComponent(email)}`;
+                            const response = await fetch(url)
                         }
                         catch (error) { console.error };
                     }

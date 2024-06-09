@@ -1,8 +1,10 @@
 const express = require('express');
 const adminsModel = require('../models/admins.model');
 const customersModel = require('../models/customers.model');
+const codesModel = require('../models/codes.model');
 const { logError } = require('../utils/logs.utils');
 const { verifyAdminbyId } = require('../utils/users.verify.utils');
+const { alertUserOfPasswordResetAttempt } = require('../utils/mailer.utils');
 const router = express.Router();
 
 router.get("/system/verify-user/:permissions/:id", async (req, res) => {
@@ -57,7 +59,7 @@ const verifyAdminByIdAndEmail = async (uid, uemail) => {
 
     if (!matchedDocument) throw new Error("Admin not found");
 
-    return { verified_user: true };
+    return { verified_user: matchedDocument };
 }
 
 const verifyCustomerByIdAndEmail = async (uid, uemail) => {
@@ -65,7 +67,7 @@ const verifyCustomerByIdAndEmail = async (uid, uemail) => {
 
     if (!matchedDocument) return false;
 
-    return true;
+    return { verified_user: matchedDocument };
 }
 
 router.get('/sessions/:user_permission/password-reset', async (req, res) => {
@@ -80,16 +82,29 @@ router.get('/sessions/:user_permission/password-reset', async (req, res) => {
     if (!userPermissionMatch) return res.status(403).render("error", { code: 403, message: `Operation requires authentication` });
 
     try {
-        const isUserValid = await userPermissionMatch(uid, uemail);
-        if (isUserValid) return res.render('accounts/password-reset', { id: uid, email: uemail });
+        const doc = await userPermissionMatch(uid, uemail);
+
+        if (doc && Object.keys(doc).length !== 0) {
+            const mailedResponse = await alertUserOfPasswordResetAttempt(doc.email, doc.username, doc._id, user_permission === "admin" ? "system-undefined" : "system-not-null");
+
+            if (mailedResponse.messageId && mailedResponse.receipient_email.length !== 0) {
+                return res.status(200).json({message: "A password reset link has been sent to your email."});
+            }
+            else {
+                return res.status(500).json({message: "An unexpected error occured. Please try again later."})
+            }
+        }
 
         throw new Error;
     } catch (error) {
         //for debugging 
-        console.error(error);
+        console.error("Error on line 101: ",error);
+
         logError(error, req.path(), `GET ${req.path()}`);
         res.render("error", { code: 500, message: `An Unexpected error occured` })
     }
 });
+
+
 
 module.exports = router;

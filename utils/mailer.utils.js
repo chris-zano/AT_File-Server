@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
-const { createEmailTemplateForVerificationCode } = require("./email_template.utils");
+const { createEmailTemplateForVerificationCode, createEmailTemplateForPasswordResetAttempt } = require("./email_template.utils");
 const { logError } = require("./logs.utils");
 require('dotenv').config();
 
@@ -10,7 +10,7 @@ module.exports.emailRegexp = () => {
     return EMAIL_REGEXP;
 }
 
-const system_email ="no-reply.atfs@hotmail.com";
+const system_email = "no-reply.atfs@hotmail.com";
 const system_email_password = "noreplyPassword@1234"
 
 const generateVerificationCode = () => {
@@ -56,7 +56,7 @@ module.exports.sendVerificationCode = async (receipient_email) => {
     options.subject = "(AT-File Server): Here is your verification code!";
     options.html = createEmailTemplateForVerificationCode(verificationCode);
 
-    try{
+    try {
         const response = await transportMail(options);
         return {
             messageId: response.messageId,
@@ -64,10 +64,33 @@ module.exports.sendVerificationCode = async (receipient_email) => {
             "verify-code": verificationCode,
         }
     }
-    catch(error) {
+    catch (error) {
         logError(error, "/system/mail-verification-code", "transportMail(options:any)");
         return null;
     }
 }
 
-// this.sendVerificationCode(system_email);
+module.exports.alertUserOfPasswordResetAttempt = async (receipient_email, username, userId, admin) => {
+    if (!(EMAIL_REGEXP.test(receipient_email))) {
+        return {
+            operationStatus: "Failed",
+            message: "Invalid Email"
+        }
+    }
+
+    options.to = receipient_email;
+    options.subject = "(AT-File Server): Password Reset Attempt";
+    options.html = createEmailTemplateForPasswordResetAttempt(receipient_email, username, userId, admin);
+
+    try {
+        const response = await transportMail(options);
+        return {
+            messageId: response.messageId,
+            receipient_email: response.accepted,
+        }
+    }
+    catch (error) {
+        logError(error, "/system/mail-verification-code", "transportMail(options:any)");
+        return null;
+    }
+}
