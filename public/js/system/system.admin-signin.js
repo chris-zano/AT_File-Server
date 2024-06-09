@@ -5,6 +5,7 @@ const signIn = async (username = "", password = "") => {
 
     console.log(response)
     if (response.status !== 200) {
+        console.log(response);
         Toast_Notification.showError("Invalid username or password");
         return null;
     }
@@ -148,6 +149,7 @@ const renderVerificationForm = (codeId) => {
 
 const signinMain = () => {
     const signinForm = getId("signin-form-signin-with-username");
+
     signinForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 

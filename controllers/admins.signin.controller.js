@@ -9,6 +9,7 @@ const Code = Codes();
 
 module.exports.authenticateAdminLogin = async (req, res) => {
     const { username, password } = req.body;
+    console.log({username, password})
 
     if (!username || !password) {
         logSession("no_user_name", req.ip, "Failed");
@@ -16,30 +17,47 @@ module.exports.authenticateAdminLogin = async (req, res) => {
         return;
     }
 
+    console.log("Breakpoint 1 - made it here")
+
     let userMatch;
     if (email_Regex.test(username)) {
         userMatch = await Admin.findOne({ email: username });
+        console.log("Breakpoint 2 - made it here")
+
     }
     else {
         userMatch = await Admin.findOne({ username: username });
+        console.log("Breakpoint 3 - made it here")
+
     }
+    console.log("Breakpoint 4 - made it here")
 
     if (!userMatch) {
         logSession(username, req.ip, "Failed");
         res.status(404).json({ message: "User not found" });
+        console.log("Breakpoint 5 - made it here")
+
         return;
     }
 
     const passwordIsMatch = await comparePassword(password, userMatch.password);
 
+    console.log("Breakpoint 6 - made it here", userMatch.password)
+    console.log(passwordIsMatch);
+
     if (!passwordIsMatch) {
         logSession(username, req.ip, "Failed");
         res.status(404).json()
+        console.log("Breakpoint 7 - made it here")
+
         return;
     }
 
     logSession(username, req.ip, "Success");
     const user = { id: userMatch._id, username: userMatch.username, email: userMatch.email, __v: userMatch.__v }
+    console.log(user);
+    console.log("Breakpoint 8 - made it here")
+
     res.status(200).json({ message: "success", user });
 }
 

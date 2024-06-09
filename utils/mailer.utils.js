@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
-const { createEmailTemplateForVerificationCode, createEmailTemplateForPasswordResetAttempt } = require("./email_template.utils");
+const { createEmailTemplateForVerificationCode, createEmailTemplateForPasswordResetAttempt, createEmailTemplateForPasswordResetConfirmation } = require("./email_template.utils");
 const { logError } = require("./logs.utils");
 require('dotenv').config();
 
@@ -81,6 +81,31 @@ module.exports.alertUserOfPasswordResetAttempt = async (receipient_email, userna
     options.to = receipient_email;
     options.subject = "(AT-File Server): Password Reset Attempt";
     options.html = createEmailTemplateForPasswordResetAttempt(receipient_email, username, userId, admin);
+
+    try {
+        const response = await transportMail(options);
+        return {
+            messageId: response.messageId,
+            receipient_email: response.accepted,
+        }
+    }
+    catch (error) {
+        logError(error, "/system/mail-verification-code", "transportMail(options:any)");
+        return null;
+    }
+}
+
+module.exports.informUserOfSuccessfulPasswordReset = async (receipient_email) => {
+    if (!(EMAIL_REGEXP.test(receipient_email))) {
+        return {
+            operationStatus: "Failed",
+            message: "Invalid Email"
+        }
+    }
+
+    options.to = receipient_email;
+    options.subject = "(AT-File Server): Your Password Has Been Changed";
+    options.html = createEmailTemplateForPasswordResetConfirmation();
 
     try {
         const response = await transportMail(options);

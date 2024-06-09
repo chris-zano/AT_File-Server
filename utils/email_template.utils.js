@@ -125,17 +125,103 @@ function createEmailTemplateForPasswordResetAttempt(receipient_email, username, 
                 <p>Hello ${username},</p>
                 <p>We received a request to reset your password for yout AT File Server account with email ${receipient_email}</p>
                 <p>Click the button below to reset it.</p>
-                <a href="/sessions/reset-user-password/${encodeURIComponent(admin)}/${encodeURIComponent(userId)}" class="button">Reset Password</a>
+                <a href="http://localhost:3300/sessions/reset-user-password/${encodeURIComponent(admin)}/${encodeURIComponent(userId)}" class="button" >Reset Password</a>
                 <p>If you did not request a password reset, please ignore this email or contact support if you have any questions.</p>
                 <p>Thank you,<br>AT-File Server</p>
             </div>
             <div class="footer">
-                <p>&copy; 2024 AT-File Server. All rights reserved.</p>
+                <p>&copy; 2024 AT File Server. All rights reserved.</p>
             </div>
         </div>
     </body>
     </html>
 `;
+
+    return emailTemplate
 }
 
-module.exports = { createEmailTemplateForVerificationCode, createEmailTemplateForPasswordResetAttempt }
+function createEmailTemplateForPasswordResetConfirmation () {
+    const emailTemplate = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Password Reset Confirmation</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    margin: 0;
+                    padding: 0;
+                }
+                .container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background-color: #ffffff;
+                    padding: 20px;
+                    border: 1px solid #dddddd;
+                    border-radius: 4px;
+                }
+                .header {
+                    text-align: center;
+                    padding: 10px 0;
+                }
+                .header img {
+                    width: 100px;
+                }
+                .content {
+                    padding: 20px;
+                    text-align: center;
+                }
+                .content h1 {
+                    color: #333333;
+                }
+                .content p {
+                    color: #666666;
+                    line-height: 1.6;
+                }
+                .footer {
+                    text-align: center;
+                    padding: 10px 0;
+                    font-size: 12px;
+                    color: #999999;
+                }
+                .button {
+                    display: inline-block;
+                    padding: 10px 20px;
+                    margin: 20px 0;
+                    background-color: #28a745;
+                    color: #ffffff;
+                    text-decoration: none;
+                    border-radius: 5px;
+                }
+                .button:hover {
+                    background-color: #218838;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <img src="http://localhost:3300/files/favicon" alt="Our Logo">
+                </div>
+                <div class="content">
+                    <h1>Password Reset Successful</h1>
+                    <p>Hello,</p>
+                    <p>Your password has been successfully reset. If you did not request this change, please contact our support team immediately.</p>
+                    <a href="http://localhost:3300/signin" class="button">Login to Your Account</a>
+                </div>
+                <div class="footer">
+                    <p>If you have any questions, feel free to <a href="http://localhost:3300/contact">Contact Us</a>.</p>
+                    <p>&copy; 2024 AT File Server. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+    `;
+
+    return emailTemplate
+}
+
+module.exports = { createEmailTemplateForVerificationCode, createEmailTemplateForPasswordResetAttempt, createEmailTemplateForPasswordResetConfirmation }
