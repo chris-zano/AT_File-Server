@@ -4,8 +4,8 @@ const customersModel = require('../models/customers.model');
 const codesModel = require('../models/codes.model');
 const { logError } = require('../utils/logs.utils');
 const { verifyAdminbyId } = require('../utils/users.verify.utils');
-const { alertUserOfPasswordResetAttempt, informUserOfSuccessfulPasswordReset } = require('../utils/mailer.utils');
-const { hashPassword } = require('../utils/password.utils');
+const { alertUserOfPasswordResetAttempt, informUserOfSuccessfulPasswordReset, emailRegexp } = require('../utils/mailer.utils');
+const { hashPassword, comparePassword } = require('../utils/password.utils');
 const router = express.Router();
 
 router.get("/system/verify-user/:permissions/:id", async (req, res) => {
@@ -119,30 +119,71 @@ router.get('/sessions/reset-user-password/:user/:id', async (req, res) => {
     const userObject = await InvokeUserTypeReference.findOne({ _id: id });
 
     if (!userObject || Object.keys(userObject).length === 0) {
-        return res.render("error", { code: 404, message: `User Not found` });
+        return res.render("error", {
+            code: 404,
+            message: `User Not found`
+        });
     }
 
-    return res.render("accounts/password-reset", { id: userObject._id, email: userObject.email, permission: user });
+    return res.render("accounts/password-reset", {
+        id: userObject._id,
+        email: userObject.email,
+        permission: user,
+        error: "empty"
+    });
 });
 
 router.post("/session/password-reset/", async (req, res) => {
     const { user_type, email, userId, password } = req.body;
+    const passwordRegexp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[#!._@-])[A-Za-z0-9#!._@-]{8,}$/;
 
-    const GetUserTypes = { "system-undefined": adminsModel, "system-not-null": customersModel };
+    const isValidUserType = (user_type === "system-undefined" || user_type === "system-not-null");
+    const isValidEmail = emailRegexp().test(email);
+    const isValidUserId = typeof userId === 'string' && userId.trim().length > 0; // userId should be a non-empty string
+    const isValidPassword = passwordRegexp.test(password);
+
+    if (!(isValidUserType && isValidEmail && isValidUserId)) {
+
+        return res.render("error", {
+            code: 400,
+            message: `An unexpected error occured.`
+        });
+    }
+    if (!(isValidPassword)) {
+        return res.render("accounts/password-reset", {
+            id: userId,
+            email: email,
+            permission: user_type,
+            error: "Invalid Password Format"
+        });
+    }
+
+    const GetUserTypes = {
+        "system-undefined": adminsModel,
+        "system-not-null": customersModel
+    };
+
     const InvokeUserTypeReference = GetUserTypes[user_type];
 
     if (!InvokeUserTypeReference) {
-        return res.render("error", { code: 403, message: `Forbidden. You are not authorised to access this resource` });
+        return res.render("error", {
+            code: 403,
+            message: `Forbidden. You are not authorised to access this resource`
+        });
     }
 
     try {
         const hashedPassword = await hashPassword(password);
-        const userObject = await InvokeUserTypeReference.updateOne({ _id: userId, email: email }, {
+        const updatePassword = await InvokeUserTypeReference.updateOne({ _id: userId, email: email }, {
             $set: {
-                password: hashedPassword.password,
+                password: hashedPassword.hashedPassword,
                 password_salt: hashedPassword.salt
             }
         });
+
+        if (!(updatePassword.acknowledged) && !(updatePassword.modifiedCount === 1)) {
+            return res.render("error", { code: 403, message: `Forbidden. You are not authorised to access this resource` });
+        }
 
         //send confirmation email to user
         await informUserOfSuccessfulPasswordReset(email);
@@ -150,9 +191,14 @@ router.post("/session/password-reset/", async (req, res) => {
         return res.render("accounts/password-changed", { userType: user_type });
     }
     catch (error) {
+        //log errors with the developer logError module
         logError(error, "/session/password-reset/", "callback");
+
         console.error(error);
-        return res.render("error", { code: 500, message: `An unexpected error occured` });
+        return res.render("error", {
+            code: 500,
+            message: `An unexpected error occured`
+        });
     }
 });
 
