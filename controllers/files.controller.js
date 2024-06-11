@@ -26,7 +26,7 @@ module.exports.serveScripts = (req, res) => {
 module.exports.serveStyleSheets = (req, res) => {
     if (req.params.filename) {
         const { directory, filename } = req.params;
-        const styleSheetFilePath = path.join(__dirname, "..", "public","css", directory, filename);
+        const styleSheetFilePath = path.join(__dirname, "..", "public", "css", directory, filename);
 
         if (!(fs.existsSync(styleSheetFilePath))) {
             res.status(404).end();
@@ -116,6 +116,28 @@ module.exports.serveUserProfilePictures = (req, res) => {
     }
     else {
         res.status(404).end();
+        return;
+    }
+}
+
+module.exports.serveStoreImages = (req, res) => {
+    const { filename } = req.params;
+    if (filename) {
+        const filePath = path.join(__dirname, "..", "AT-FS", "images", "store_images", filename);
+
+        if (!(fs.existsSync(filePath))) {
+            res.type("png");
+            res.status(404)
+            fs.createReadStream(DEFAULT_PROFILE_IMAGE).pipe(res);
+            return;
+        }
+
+        // res.set('Cache-Control', 'public, max-age=86400');
+        res.type('png');
+        fs.createReadStream(filePath).pipe(res);
+    }
+    else {
+        res.status(404);
         return;
     }
 }

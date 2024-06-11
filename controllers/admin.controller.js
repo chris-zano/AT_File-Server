@@ -1,6 +1,7 @@
-const { Admins } = require("../utils/db.exports.utils");
+const { Admins, Files } = require("../utils/db.exports.utils");
 const { logError } = require("../utils/logs.utils");
 const Admin = Admins();
+const File_ = Files()
 
 const fs = require("fs");
 const path = require("path");
@@ -57,9 +58,26 @@ module.exports.updateAdminUsername = async (req, res) => {
     return res.status(200).redirect(`/admin/views/profile/${id}`);
 }
 
-module.exports.uploadStoreImage = (req, res) => {
-    const { filename } = req.file;
-    console.log("a new Image has been upload as: ", filename);
+module.exports.uploadStoreImage = async (req, res) => {
+    const { filename, originalname, mimetype, encoding, size } = req.file,
+        { title, description } = req.body,
+        admin_id = req.verifiedUser.id,
+        file_size = `${(size / (1024 * 1024)).toFixed(2)}MB`,
+        filePathUrl = `/files/store/images/${filename}`,
+        imageObject = { admin_id, title, description, filename, originalname, mimetype, encoding, file_size, filePathUrl };
+
+    try {
+        const newFileDocument = new File_(imageObject);
+        await newFileDocument.save();
+
+        res.status(200).redirect(`/admin/views/uploads/${id}`);
+
+    } catch (error) {
+        logError(error, req.url, "uploadStoreImage");
+        return res.status(500).redirect(`/admin/views/uploads/${id}`);
+    }
+
+
     res.end("hello");
 }
 module.exports.uploadStorePDF = (req, res) => {
