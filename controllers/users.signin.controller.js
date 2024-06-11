@@ -39,7 +39,8 @@ module.exports.authenticateWithUsernameAndPassword = async (req, res) => {
     }
 
     logSession(username, req.ip, "Success");
-    res.status(200).json({ message: "success", user: userMatch });
+
+    res.status(200).json({ message: "success", user: { id: userMatch._id, email: userMatch.email, username: userMatch.username, firstName: userMatch.firstName, lastName: userMatch.lastName, profilePicURL: userMatch.profilePicURL, downloads: userMatch.downloads, mailed: userMatch.mailed, favourites: userMatch.favourites, v: userMatch.__v } });
 }
 
 module.exports.initiateSignUpSequence = async (req, res) => {

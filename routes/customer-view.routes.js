@@ -6,7 +6,7 @@ const router = express.Router();
 //customer views
 router.get('/', renderGettinStartedPage);
 router.get('/signin', renderSigninPage);
-router.get('/store', usersVerifyUtils.verifyUserbyId, renderStoreForUsers);
+router.get('/store', renderStoreForUsers);
 router.get('/recovery', (req,res) => res.render("accounts/forgot-password.ejs", {error: "empty"}));
 
 module.exports = router;

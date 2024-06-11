@@ -41,7 +41,7 @@ const sendVerificationRequest = async (options = {}) => {
 }
 
 const signupWithEmailAndPassword = async (email, password) => {
-    const request_options = { email, user_password:password };
+    const request_options = { email, user_password: password };
     const postSigninURL = '/users/signup/set-password';
     const response = await initiatePostRequest(postSigninURL, request_options);
 
@@ -118,6 +118,7 @@ const renderVerificationForm = (codeId) => {
                                 else {
                                     const res = await signupWithEmailAndPassword(email, user_input);
                                     window.sessionStorage.setItem("user_data", JSON.stringify(res.user));
+                                    window.sessionStorage.setItem("session-user", JSON.stringify(res.user.id));
                                     location.href = `/store`;
                                 }
                             });
@@ -156,10 +157,9 @@ const signinMain = () => {
         // console.log({ username, password });
         const res = await signIn(username, password);
         if (res.message === "success") {
-            sessionStorage.setItem("session-user", JSON.stringify(res.user));
-            const endPoint = `user=${res.user._id}`;
-            console.log(endPoint);
-            window.location.href =`/users/store`;
+            window.sessionStorage.setItem("user_data", JSON.stringify(res.user));
+            window.sessionStorage.setItem("session-user", JSON.stringify(res.user.id));
+            window.location.href = `/store`;
         }
     });
 

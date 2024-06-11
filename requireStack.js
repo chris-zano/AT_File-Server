@@ -10,6 +10,7 @@ const callAndExecuteRequireStack = (app, server) => {
      const AdminSigninRoutes = require("./routes/admin-signin.routes");
      const CustomerSigninRoutes = require("./routes/customer-signin.routes");
      const authRoutes = require('./routes/auth.routes');
+     const recoveryRoutes = require('./routes/recovery.routes');
 
 
      //use routes here
@@ -20,6 +21,7 @@ const callAndExecuteRequireStack = (app, server) => {
      app.use(fileRoutes);
      app.use(AdminSigninRoutes);
      app.use(CustomerSigninRoutes);
+     app.use(recoveryRoutes);
 };
 
 module.exports = {callAndExecuteRequireStack};

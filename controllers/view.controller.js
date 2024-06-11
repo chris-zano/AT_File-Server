@@ -61,7 +61,6 @@ module.exports.renderStoreForUsers = async (req, res) => {
     res.status(200);
     res.render('users/users.main.ejs',
         {
-            user: req.verifiedUser,
             pageUrl: "home",
             scripts_urls: [],
             stylesheets_urls: ["/files/css/users/users.css", "/files/css/users/store.css"],

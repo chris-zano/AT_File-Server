@@ -34,7 +34,10 @@
                 </div>
 
                 <div class="input-group">
-                    <a href="/recovery">Forgot password?</a>
+                    <a href="/recovery" onclick="setRecoveryMode()">Forgot password?</a>
+                    <script>
+                        const setRecoveryMode = () => window.sessionStorage.setItem("recovery-mode", JSON.stringify("customer"));
+                    </script>
                 </div>
 
                 <div class="input-group">
