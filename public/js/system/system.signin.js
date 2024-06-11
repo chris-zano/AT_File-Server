@@ -118,7 +118,7 @@ const renderVerificationForm = (codeId) => {
                                 else {
                                     const res = await signupWithEmailAndPassword(email, user_input);
                                     window.sessionStorage.setItem("user_data", JSON.stringify(res.user));
-                                    location.href = `/store/${encodeURIComponent("user="+res.user.id)}`;
+                                    location.href = `/store`;
                                 }
                             });
                         }
@@ -159,7 +159,7 @@ const signinMain = () => {
             sessionStorage.setItem("session-user", JSON.stringify(res.user));
             const endPoint = `user=${res.user._id}`;
             console.log(endPoint);
-            window.location.href =`/users/store/${endPoint}`;
+            window.location.href =`/users/store`;
         }
     });
 
