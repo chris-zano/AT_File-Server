@@ -71,13 +71,10 @@ module.exports.uploadStoreFile = async (req, res) => {
         const newFileDocument = new File_(fileObject);
         await newFileDocument.save();
 
-        res.status(200).redirect(`/admin/views/uploads/${id}`);
+        return res.status(200).redirect(`/admin/views/uploads/${admin_id}`);
 
     } catch (error) {
         logError(error, req.url, "uploadStoreFile");
-        return res.status(500).redirect(`/admin/views/uploads/${id}`);
+        return res.status(500).redirect(`/admin/views/uploads/${admin_id}`);
     }
-
-
-    res.end("hello");
 }
