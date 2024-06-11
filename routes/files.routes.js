@@ -8,6 +8,6 @@ router.get('/files/favicon/', serveFavicon);
 router.get('/files/typeface/:filename', serveTypeface);
 router.get('/files/system/images/:filename', serveSystemImages);
 router.get('/files/users/images/profilePicurl/:filename', serveUserProfilePictures);
-router.get('/files/store/images/:filename/:id', serveStoreImages);
+router.get('/files/store/image/:filename', serveStoreImages);
 
 module.exports = router;

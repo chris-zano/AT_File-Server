@@ -1,5 +1,6 @@
-const { Customers } = require("../utils/db.exports.utils");
+const { Customers, Files } = require("../utils/db.exports.utils");
 const Customer = Customers();
+const File_ = Files()
 
 
 
@@ -32,10 +33,13 @@ module.exports.renderAminSigninPage = (req, res) => {
 
 }
 
-module.exports.renderAdminViews = (req, res) => {
+module.exports.renderAdminViews = async (req, res) => {
+    const adminDashboardFilesCollection = await File_.find() || [];
+
     res.type("text/html");
     res.set("Cache-Control", "public, max-age=10");
     res.status(200);
+
     res.render('admin/admin.main.ejs',
         {
             id: req.verifiedUser.id,
@@ -45,7 +49,8 @@ module.exports.renderAdminViews = (req, res) => {
             v: req.verifiedUser.v,
             pageUrl: req.params.pageUrl,
             scripts_urls: [`/files/scripts/admin/admin.${req.params.pageUrl}.js`],
-            stylesheets_urls: ["/files/css/admin/admin.css", `/files/css/admin/${req.params.pageUrl}.css`]
+            stylesheets_urls: ["/files/css/admin/admin.css", `/files/css/admin/${req.params.pageUrl}.css`],
+            fileList: adminDashboardFilesCollection
         }
     );
 }

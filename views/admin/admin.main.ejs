@@ -8,14 +8,14 @@
     <% for( let stylesheet_url of stylesheets_urls) { %>
     <link rel="stylesheet" href="<%= stylesheet_url %>">
     <% } %>
-    <title>(AT-FS): [Admin] Dashboard</title>
+    <title>(AT-FS): [Admin] <%= pageUrl %></title>
 </head>
 <body>
     <%- include('templates/admin.header.ejs') %>
     
     <main>
         
-        <% if (pageUrl === "home") { %>
+        <% if (pageUrl === "dashboard") { %>
             <%- include('layouts/admin.home.ejs') %>
         <% } else if (pageUrl === "uploads") { %>
             <%- include('layouts/admin.upload.ejs') %>

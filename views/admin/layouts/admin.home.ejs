@@ -1,1 +1,67 @@
-This is the admin dashboard (Home).
+<section class="admin_home_main">
+    <div class="container">
+        <div class="file-cards"> 
+            <% for( let file of fileList) { %>
+                <div class="file-card">
+                    <img src=<%= 
+                            file.type === "Image File" ? `${file.filePathUrl}` : 
+                            file.type === "PDF Document" ? "/files/system/images/pdf.png": 
+                            "/files/system/images/word.png" 
+                        %>
+                        alt="File Thumbnail" 
+                        class="file-thumbnail">
+                    <div class="file-info">
+                        <h2><%= file.title %></h2>
+                        <p>Type: <%= file.type %></p>
+                        <p>Number of Downloads: <%= file.downloads.length %></p>
+                        <button class="expand-btn" onclick="toggleExpand('downloads-<%= file._id %>')">Show Downloads</button>
+                        <div id='downloads-<%= file._id %>' class="expand-content">
+                            <% if (file.downloads.length === 0) { %>
+                                <ul>
+                                    <li>No downloads yet</li>
+                                </ul>
+                            <% } else { %>
+                                <ul>
+                                    <% for( let download of download_details ) { %>
+                                        <li><%= download.username [ download.email ] %></li>
+                                    <% } %>
+                                </ul>
+                            <% } %>
+                        </div>
+                        <p>Number of Shares: <%= file.shared.length %></p>
+                        <button class="expand-btn" onclick="toggleExpand('shares-<%= file._id %>')">Show Shares</button>
+                        <div id="shares-<%= file._id %>" class="expand-content">
+                            <% if (file.shared.length === 0) { %>
+                                <ul>
+                                    <li>No shares yet</li>
+                                </ul>
+                            <% } else { %>
+                                <ul>
+                                    <% for( let share of shared_details ) { %>
+                                        <li><%= share.username [ share.email ] %></li>
+                                    <% } %>
+                                </ul>
+                            <% } %>
+                        </div>
+                        <div class="file-actions">
+                            <button>Edit</button>
+                            <button>Delete</button>
+                            <button>Change Visibility</button>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<script>
+    function toggleExpand(id) {
+        const element = document.getElementById(id);
+        if (element.style.display === "none" || element.style.display === "") {
+            element.style.display = "block";
+        } else {
+            element.style.display = "none";
+        }
+    }
+</script>

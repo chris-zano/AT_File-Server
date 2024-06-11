@@ -2,8 +2,8 @@ const verifyUserCredentials = async (user_id, permissions) => {
     const url = `/system/verify-user/${permissions}/${user_id}`;
 
     try {
-        const data = await initiateGetRequest(url);
-        return data;
+        const data = await fetch(url);
+        return await data.json();
     } catch (error) {
         window.location.replace(`/error/400/${encodeURIComponent(url)}/${encodeURIComponent(error)}`);
     }

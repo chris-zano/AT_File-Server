@@ -13,7 +13,7 @@ module.exports.serveScripts = (req, res) => {
         }
 
         res.type("text/javascript");
-        // res.set("Cache-Control", "public, max-age=10");
+        res.set("Cache-Control", "public, max-age=10");
         res.status(200);
         fs.createReadStream(scriptFilePath).pipe(res);
     }
@@ -29,12 +29,13 @@ module.exports.serveStyleSheets = (req, res) => {
         const styleSheetFilePath = path.join(__dirname, "..", "public", "css", directory, filename);
 
         if (!(fs.existsSync(styleSheetFilePath))) {
+            console.log(styleSheetFilePath, " does not exist");
             res.status(404).end();
             return;
         }
 
         res.type("css");
-        // res.set("Cache-Control", "public, max-age=10");
+        res.set("Cache-Control", "public, max-age=10");
         res.status(200);
         fs.createReadStream(styleSheetFilePath).pipe(res);
     }
@@ -55,7 +56,7 @@ module.exports.serveTypeface = (req, res) => {
         }
 
         res.type("font/ttf");
-        // res.set("Cache-Control", "public, max-age=10");
+        res.set("Cache-Control", "public, max-age=86400");
         res.status(200);
         fs.createReadStream(typefaceFilePath).pipe(res);
     }
@@ -73,7 +74,7 @@ module.exports.serveFavicon = (req, res) => {
         return;
     }
 
-    // res.set('Cache-Control', 'public, max-age=86400');
+    res.set('Cache-Control', 'public, max-age=86400');
     res.type('image/x-icon');
     fs.createReadStream(faviconFilePath).pipe(res);
 }
@@ -88,7 +89,7 @@ module.exports.serveSystemImages = (req, res) => {
             return;
         }
 
-        // res.set('Cache-Control', 'public, max-age=86400');
+        res.set('Cache-Control', 'public, max-age=60');
         res.type('png');
         fs.createReadStream(systemImagesFilePath).pipe(res);
     }
@@ -110,7 +111,7 @@ module.exports.serveUserProfilePictures = (req, res) => {
             return;
         }
 
-        // res.set('Cache-Control', 'public, max-age=86400');
+        res.set('Cache-Control', 'public, max-age=30');
         res.type('png');
         fs.createReadStream(userImagePath).pipe(res);
     }
@@ -132,7 +133,7 @@ module.exports.serveStoreImages = (req, res) => {
             return;
         }
 
-        // res.set('Cache-Control', 'public, max-age=86400');
+        res.set('Cache-Control', 'public, max-age=30');
         res.type('png');
         fs.createReadStream(filePath).pipe(res);
     }

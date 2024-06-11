@@ -61,11 +61,15 @@ module.exports.updateAdminUsername = async (req, res) => {
 module.exports.uploadStoreFile = async (req, res) => {
     const { filename, originalname, mimetype, encoding, size } = req.file,
         { title, description } = req.body,
-        {fileType } = req.params,
+        { fileType } = req.params,
         admin_id = req.verifiedUser.id,
         file_size = `${(size / (1024 * 1024)).toFixed(2)}MB`,
-        filePathUrl = `/files/store/${fileType}/${filename}`,
-        fileObject = { admin_id, title, description, filename, originalname, mimetype, encoding, file_size, filePathUrl };
+        filePathUrl = `/files/store/${fileType}/${filename}`;
+
+    const matchFileTypeString = {'image': "Image File", 'pdf': "PDF document", 'doc': "Word Document"};
+    const typeofFile = matchFileTypeString[fileType];
+    if (!typeofFile) return res.status(400).redirect(`/admin/views/uploads/${admin_id}`);
+    const fileObject = { admin_id, title, description, filename, originalname, mimetype, encoding, file_size, filePathUrl, typeofFile };
 
     try {
         const newFileDocument = new File_(fileObject);

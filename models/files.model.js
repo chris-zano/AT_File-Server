@@ -40,7 +40,8 @@ const fileSchema = new Schema({
         required: true
     },
     downloads: [{type: mongoose.Types.ObjectId, ref: "Customers"}],
-    shared: [{type: mongoose.Types.ObjectId, ref: "Customers"}]
+    shared: [{type: mongoose.Types.ObjectId, ref: "Customers"}],
+    type: String
 }, {
     timestamps: true,
     toObject: { virtuals: true },
