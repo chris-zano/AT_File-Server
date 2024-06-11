@@ -1,6 +1,6 @@
 <div class="upload-container">
     <h1>Upload File</h1>
-    <form id="uploadForm">
+    <form id="uploadForm" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" required>
@@ -19,7 +19,7 @@
         </div>
         <div class="form-group">
             <label for="fileUpload">Choose File:</label>
-            <input type="file" id="fileUpload" name="fileUpload" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" required>
+            <input type="file" id="fileUpload" name="fileUpload" accept=".jpg,.jpeg,.png" required>
         </div>
         <div class="form-group">
             <label for="visibility">Visibility: <small>&#9432; choose who can see it</small></label>

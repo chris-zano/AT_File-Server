@@ -26,8 +26,8 @@ router.post("/admins/profile/update-component/profile-picture/:id/:old_filename/
 router.post("/admins/profile/update-component/username/:id/:v", verifyAdminbyId, updateAdminUsername);
 
 //store uploads
-router.post("admin/store/uploads/images/:id", verifyAdminbyId, storeImagesUploadsPath.single("store_image"), uploadStoreImage);
-router.post("admin/store/uploads/pdfs/:id", verifyAdminbyId, storePDFsUploadsPath.single("store_pdf"), uploadStorePDF);
-router.post("admin/store/uploads/pdfs/:id", verifyAdminbyId, storeDocsUploadsPath.single("store_doc"), uploadStoreDoc);
+router.post("/admin/store/uploads/:visibility/image/:id", verifyAdminbyId, storeImagesUploadsPath.single("fileUpload"), uploadStoreImage);
+router.post("/admin/store/uploads/:visibility/pdf/:id", verifyAdminbyId, storePDFsUploadsPath.single("fileUpload"), uploadStorePDF);
+router.post("/admin/store/uploads/:visibility/doc/:id", verifyAdminbyId, storeDocsUploadsPath.single("fileUpload"), uploadStoreDoc);
 
 module.exports = router;

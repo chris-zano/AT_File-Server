@@ -44,7 +44,7 @@ module.exports.renderAdminViews = (req, res) => {
             email: req.verifiedUser.email,
             v: req.verifiedUser.v,
             pageUrl: req.params.pageUrl,
-            scripts_urls: [],
+            scripts_urls: [`/files/scripts/admin/admin.${req.params.pageUrl}.js`],
             stylesheets_urls: ["/files/css/admin/admin.css", `/files/css/admin/${req.params.pageUrl}.css`]
         }
     );
