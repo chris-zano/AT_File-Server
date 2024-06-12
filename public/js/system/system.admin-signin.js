@@ -120,7 +120,7 @@ const renderVerificationForm = (codeId) => {
                                     const res = await signupWithEmailAndPassword(email, user_input);
                                     window.sessionStorage.setItem("admin_data", JSON.stringify(res.user));
                                     window.sessionStorage.setItem("session-admin", JSON.stringify(res.user.id));
-                                    window.location.replace(`/admin/views/home/${res.user.id}`);
+                                    window.location.replace(`/admin/views/dashboard/${res.user.id}`);
                                 }
                             });
                         }
@@ -160,7 +160,7 @@ const signinMain = () => {
         if (res.message === "success") {
             sessionStorage.setItem("admin_data", JSON.stringify(res.user));
             sessionStorage.setItem("session-admin", JSON.stringify(res.user.id));
-            window.location.replace(`/admin/views/home/${res.user.id}`);
+            window.location.replace(`/admin/views/dashboard/${res.user.id}`);
         }
         else {
             console.log(res);

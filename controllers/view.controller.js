@@ -56,6 +56,7 @@ module.exports.renderAdminViews = async (req, res) => {
 }
 
 module.exports.renderStoreForUsers = async (req, res) => {
+    const adminDashboardFilesCollection = await File_.find({visibility: "public"}) || [];
     res.type("text/html");
     res.set("Cache-Control", "public, max-age=10");
     res.status(200);
@@ -64,42 +65,7 @@ module.exports.renderStoreForUsers = async (req, res) => {
             pageUrl: "home",
             scripts_urls: [],
             stylesheets_urls: ["/files/css/users/users.css", "/files/css/users/store.css"],
-            files: [
-                {
-                    type: "image",
-                    thumbnailUrl: "/files/favicon",
-                    title: "This is a new brthday card image",
-                    description: "This is the description of a birthday description"
-                },
-                {
-                    type: "image",
-                    thumbnailUrl: "/files/favicon",
-                    title: "This is a new brthday card image",
-                    description: "This is the description of a birthday description"
-                },
-                {
-                    type: "image",
-                    thumbnailUrl: "/files/favicon",
-                    title: "This is a new brthday card image",
-                    description: "This is the description of a birthday description"
-                },
-                {
-                    type: "image",
-                    thumbnailUrl: "/files/favicon",
-                    title: "This is a new brthday card image",
-                    description: "This is the description of a birthday description"
-                },
-                {
-                    type: "image",
-                    thumbnailUrl: "/files/favicon",
-                    title: "This is a new brthday card image",
-                    description: "This is the description of a birthday description"
-                }
-            ]
+            files: adminDashboardFilesCollection
         }
     );
-}
-
-module.exports.renderPasswordResetPage = (req, res) => {
-    
 }

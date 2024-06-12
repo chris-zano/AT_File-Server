@@ -41,6 +41,7 @@ const fileSchema = new Schema({
     },
     downloads: [{type: mongoose.Types.ObjectId, ref: "Customers"}],
     shared: [{type: mongoose.Types.ObjectId, ref: "Customers"}],
+    visibility: String,
     type: String
 }, {
     timestamps: true,
