@@ -17,10 +17,10 @@ const downloadFile = (button) => {
 }
 const shareFile = (button) => {
     const file_id = button.getAttribute("data-file_id");
-    renderFileShareForm(file_id, file_title, file_thumbnail);
+    renderFileShareForm(file_id);
 }
 
-async function renderFileShareForm(id, title, img) {
+function renderFileShareForm(id, title, img) {
     const shareFormContainer = `
         <div class="form-container">
             <h2>Share File via Email</h2>
@@ -51,14 +51,29 @@ async function renderFileShareForm(id, title, img) {
         }
     });
 
-    document.getElementById("emailForm").addEventListener("submit", (e) => {
+    document.getElementById("emailForm").addEventListener("submit", async (e) => {
         e.preventDefault();
         const subject = e.target.querySelector("#share-subject").value;
         const message = e.target.querySelector("#share-message").value;
         const receipients = String(e.target.querySelector("#share-email_list").value).split("; ");
 
         const options = { id, subject, message, receipients };
-        console.log(options);
-    })
+
+        try {
+            const response = await fetch('/users/share-file', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(options)
+            });
+            const data = res.json();
+            const status = response.status;
+
+            console.log({ status, data });
+        } catch (error) {
+
+        }
+    });
 
 }
