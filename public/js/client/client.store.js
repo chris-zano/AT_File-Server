@@ -5,38 +5,35 @@ const addToFavorites = async (button) => {
 
     console.log(url)
 }
-const downloadFile =  (button) => {
+const downloadFile = (button) => {
     const file_path = button.getAttribute("data-file_path");
     const originalname = button.getAttribute("data-originalname");
     const filename = button.getAttribute("data-title");
 
     const downloadLink = document.createElement("a");
     downloadLink.href = file_path;
-    downloadLink.download = `${filename.replaceAll(" ", "_")}${originalname.substring(originalname.lastIndexOf("."))}`; 
+    downloadLink.download = `${filename.replaceAll(" ", "_")}${originalname.substring(originalname.lastIndexOf("."))}`;
     downloadLink.click();
 }
 const shareFile = (button) => {
-    const file_thumbnail = button.getAttribute("data-thumbnail");
-    const file_title = button.getAttribute("data-title");
     const file_id = button.getAttribute("data-file_id");
-
     renderFileShareForm(file_id, file_title, file_thumbnail);
 }
 
-function renderFileShareForm(id, title, img) {
+async function renderFileShareForm(id, title, img) {
     const shareFormContainer = `
         <div class="form-container">
             <h2>Share File via Email</h2>
             <form id="emailForm">
                 <label for="subject">Subject:</label>
-                <input type="text" id="subject" name="subject" required>
+                <input type="text" id="share-subject" name="subject" required>
 
                 <label for="message">Message:</label>
-                <textarea id="message" name="message" rows="4" required></textarea>
+                <textarea id="share-message" name="message" rows="4" required></textarea>
 
                 <label for="email">Email:</label>
                 <div class="email-input">
-                    <input type="email" id="email" name="email" required>
+                    <input type="text" id="share-email_list" name="email" required>
                     <button type="button" id="addEmailBtn">Add Email</button>
                 </div>
 
@@ -46,8 +43,8 @@ function renderFileShareForm(id, title, img) {
     `;
 
     document.getElementById("share-file_form_container").innerHTML = shareFormContainer;
-    document.getElementById('addEmailBtn').addEventListener('click', function() {
-        const emailInput = document.getElementById('email');
+    document.getElementById('addEmailBtn').addEventListener('click', function () {
+        const emailInput = document.getElementById('share-email_list');
         if (emailInput.value && !emailInput.value.endsWith(';')) {
             emailInput.value += '; ';
             emailInput.focus()
@@ -56,7 +53,12 @@ function renderFileShareForm(id, title, img) {
 
     document.getElementById("emailForm").addEventListener("submit", (e) => {
         e.preventDefault();
-        const subject = document.target.querySelector("#")
+        const subject = e.target.querySelector("#share-subject").value;
+        const message = e.target.querySelector("#share-message").value;
+        const receipients = String(e.target.querySelector("#share-email_list").value).split("; ");
+
+        const options = { id, subject, message, receipients };
+        console.log(options);
     })
 
 }
