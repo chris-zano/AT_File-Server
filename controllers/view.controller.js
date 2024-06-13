@@ -63,7 +63,7 @@ module.exports.renderStoreForUsers = async (req, res) => {
     res.render('users/users.main.ejs',
         {
             pageUrl: "home",
-            scripts_urls: [],
+            scripts_urls: ['/files/scripts/client/client.store.js'],
             stylesheets_urls: ["/files/css/users/users.css", "/files/css/users/store.css"],
             files: adminDashboardFilesCollection
         }
