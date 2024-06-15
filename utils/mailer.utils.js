@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const path = require('path')
 const randomstring = require("randomstring");
-const { createEmailTemplateForVerificationCode, createEmailTemplateForPasswordResetAttempt, createEmailTemplateForPasswordResetConfirmation } = require("./email_template.utils");
+const { createEmailTemplateForVerificationCode, createEmailTemplateForPasswordResetAttempt, createEmailTemplateForPasswordResetConfirmation, createEmailTemplateForFileSharing } = require("./email_template.utils");
 const { logError } = require("./logs.utils");
 const { getEmailAuthCredentials } = require('../requireStack');
 const EMAIL_AUTH = getEmailAuthCredentials();
@@ -23,8 +23,6 @@ const generateVerificationCode = () => {
 
 const transporter = nodemailer.createTransport({
     service: "hotmail",
-    port: 465,
-    secure: true,
     auth: { ...EMAIL_AUTH }
 });
 
@@ -120,8 +118,8 @@ module.exports.informUserOfSuccessfulPasswordReset = async (recipient_email) => 
     }
 }
 
-const isFileObjectValid = (fileObject = { filename: "", path: "" }) => {
-    const expectedkeys = ["filename", "path"];
+const isFileObjectValid = (fileObject = { filename: "", path: "", size: "" }) => {
+    const expectedkeys = ["filename", "path", "size"];
     const objectkeys = Object.keys(fileObject);
 
     if (objectkeys.length !== expectedkeys.length) return false
@@ -133,20 +131,60 @@ const isFileObjectValid = (fileObject = { filename: "", path: "" }) => {
 
     if (typeof fileObject.path !== 'string' || fileObject.path.length === 0) return false;
 
+    if (typeof fileObject.size !== 'string' || fileObject.size.length === 0) return false;
+
     if (path.resolve(fileObject.path) !== fileObject.path) return false
 
     return true;
 
 }
 
-module.exports.sendFilesViaEmail = (fileObjects = [], recipients = []) => {
+module.exports.sendFilesViaEmail = async (fileObjects = [], recipients = [], username = "ATFS_user", message = "") => {
     if (!Array.isArray(fileObjects) || !Array.isArray(recipients) || fileObjects.length === 0 || recipients.length === 0) {
-        return { rejectAll: true };
+        return {
+            state: "Failed",
+            message: "[ ArgumentError ] :: Invalid arguments",
+            recipients: undefined,
+            rejected: undefined
+        };
     }
 
     const validFileObjects = fileObjects.filter((obj) => isFileObjectValid(obj));
+    if (validFileObjects.length === 0) {
+        return{
+            state: "Failed",
+            message: "[ ArgumentError ] :: No valid file objects",
+            recipients: undefined,
+            rejected: undefined
+        };
+    }
 
-    console.log(validFileObjects);
+    const defaultMessage = "Please find the attached files below. If you have any questions, feel free to reach out."
+    const finalMessage = message.length === 0 ? defaultMessage : message;
 
-    return true;
+    options.to = recipients;
+    options.subject = "(AT-File Server): A File Has Been Shared With You";
+    options.html = createEmailTemplateForFileSharing(username, finalMessage);
+    options.attachments = fileObjects.map((file) => ({ filename: file.filename, path: file.path }));
+
+    try {
+        console.log("[ mailer ]::// ",transporter.options, options)
+        const response = await transportMail(options);
+        console.log("[ mailer-response ]::// ",response)
+        return {
+            state: "Success",
+            message: response.messageId,
+            recipients: response.accepted,
+            rejected: response.rejected
+        }
+    }
+    catch (error) {
+        logError(error, "/users/share-file", "sendFilesViaEmail");
+        return {
+            state: "Failed",
+            message: "[ ServerError ] :: Unable to send email",
+            recipients: undefined,
+            rejected: undefined
+        };
+    }
 }

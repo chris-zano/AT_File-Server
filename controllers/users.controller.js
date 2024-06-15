@@ -48,7 +48,7 @@ const getFileObject = async (id) => {
         const matchedDocument = await file.findOne({ _id: id });
         if (!matchedDocument) return { status: "Fail", message: `No match for file_id ${id}`, doc: {} }
 
-        const fileDetails = { filename: matchedDocument.filename, size: matchedDocument.file_size, path: getFilepath(matchedDocument.filename, matchTypes[matchedDocument.type] || undefined) };
+        const fileDetails = { filename: matchedDocument.originalname, size: matchedDocument.file_size, path: getFilepath(matchedDocument.filename, matchTypes[matchedDocument.type] || undefined) };
 
         return { status: "Success", message: `Document match for file_id ${id}`, doc: fileDetails };
     }
@@ -61,10 +61,9 @@ const getFileObject = async (id) => {
 module.exports.shareFileController = async (req, res) => {
     const { id, message, receipients, user_id } = req.body;
     const validReceipientEmails = Array.isArray(receipients) ? receipients.filter((receipient) => (emailregexp.test(receipient))) : [];
-    const invalidRecientEmails = Array.isArray(receipients) ? receipients.filter((receipient) => (!emailregexp.test(receipient))): [];
+    const invalidRecientEmails = Array.isArray(receipients) ? receipients.filter((receipient) => (!emailregexp.test(receipient))) : [];
 
-    if (validReceipientEmails.length === 0) res.status(400).json({ message: "Invalid receipient emails" })
-    console.log({ id, message, validReceipientEmails });
+    if (validReceipientEmails.length === 0) return res.status(400).json({ message: "Invalid receipient emails" })
 
     try {
         const sender = await getCustomerDetails(user_id);
@@ -73,8 +72,14 @@ module.exports.shareFileController = async (req, res) => {
         const fileItem = await getFileObject(id);
         if (fileItem.status === "Fail") return res.status(404).json({ "message": fileItem.message, invalidRecientEmails });
 
-        console.log("Sender ==>> ", sender);
-        console.log("File ==>> ", fileItem);
+        const responseFromMailer = await mailer.sendFilesViaEmail([fileItem.doc], validReceipientEmails, sender.doc.email, message);
+        console.log(responseFromMailer)
+        if (responseFromMailer.state === "Failed") {
+            return res.status(400).json({ message: responseFromMailer.message, invalidRecientEmails });
+        }
+
+        //update fileDocuments [ mailed property ]
+
         return res.status(200).json({ message: "Email sent successfully", invalidRecientEmails });
 
     } catch (error) {

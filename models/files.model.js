@@ -40,9 +40,13 @@ const fileSchema = new Schema({
         required: true
     },
     downloads: [{type: mongoose.Types.ObjectId, ref: "Customers"}],
-    shared: [{type: mongoose.Types.ObjectId, ref: "Customers"}],
+    shared: [{from: {type: mongoose.Types.ObjectId, ref: "Customers"}, to: []}],
     visibility: String,
-    type: String
+    type: {
+        type: String,
+        enum: ['Image File', 'PDF document', 'Word Document'],
+        required: true
+    }
 }, {
     timestamps: true,
     toObject: { virtuals: true },
