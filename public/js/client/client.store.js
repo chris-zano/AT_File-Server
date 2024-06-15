@@ -53,39 +53,41 @@ function renderFileShareForm(id) {
     document.getElementById("emailForm").addEventListener("submit", async (e) => {
         e.preventDefault();
         const message = e.target.querySelector("#share-message").value;
-        const receipients = String(e.target.querySelector("#share-email_list").value).split("; ");
+        const recipients = String(e.target.querySelector("#share-email_list").value).split("; ");
 
-        const options = { id, message, receipients, user_id };
+        const options = { id, message, recipients, user_id };
 
         try {
-            const response = await fetch('/users/share-file', {
+            fetch('/users/share-file', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(options)
-            });
-            const data = await response.json();
-            const status = response.status;
-
-            
-
-            if (!response.ok) {
-                Toast_Notification.showError(data.message)
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
-
-            document.getElementById("share-file_form_container").innerHTML = ""
-            document.getElementById("share-file_form_container").style.visibility = "hidden";
-
-            if (data.invalidRecientEmails.length !== 0) {
-                Toast_Notification.showWarning(data.message + `. However, some receipient emails are not valid: [${Array(data.invalidRecientEmails).toString()}]`);
-            }
-            else {
-                Toast_Notification.showSuccess(data.message)
-            }
-            console.log({ status, data });
+            })
+                .then((response) => {
+                    document.getElementById("share-file_form_container").innerHTML = ""
+                    document.getElementById("share-file_form_container").style.visibility = "hidden";
+                    console.log(response.json())
+                    
+                    if (response.status === 202) {
+                        console.log("Request accepted for processing (202)");
+                        Toast_Notification.showInfo("Email is being queued to be sent");
+                    } 
+                    else {
+                        if (response.status === 400) {
+                            const data = response.json();
+                            Toast_Notification.showError(data.message);
+                            throw new Error(data.message);
+                        }
+                        else {
+                             console.log(response.json());
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error occurred:", error);
+                });
         } catch (error) {
             console.error('Error fetching data:', error);
         }

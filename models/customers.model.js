@@ -41,8 +41,7 @@ const customersSchema = new Schema({
         default:""
     },
     mailed: {
-        type: Array,
-        default:""
+        type: Array
     },
 },{timestamps: true});
 

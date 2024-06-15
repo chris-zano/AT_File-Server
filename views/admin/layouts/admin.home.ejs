@@ -36,24 +36,8 @@
                                     </ul>
                                     <% } %>
                         </div>
-                        <p>Number of Shares: <%= file.shared.length %>
-                        </p>
-                        <button class="expand-btn" onclick="toggleExpand('shares-<%= file._id %>')">Show Shares</button>
-                        <div id="shares-<%= file._id %>" class="expand-content">
-                            <% if (file.shared.length===0) { %>
-                                <ul>
-                                    <li>No shares yet</li>
-                                </ul>
-                                <% } else { %>
-                                    <ul>
-                                        <% for( let share of shared_details ) { %>
-                                            <li>
-                                                <%= share.username [ share.email ] %>
-                                            </li>
-                                            <% } %>
-                                    </ul>
-                                    <% } %>
-                        </div>
+                        <p>Number of Shares: <%= file.shared.length %></p>
+                        
                         <div class="file-actions">
                             <section>
                                 <button class="edit-btn" onclick="toggleExpand('edit-<%= file._id %>')">Edit</button>

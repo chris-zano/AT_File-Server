@@ -5,6 +5,7 @@ const emailregexp = mailer.emailRegexp();
 const mongoose = require('mongoose');
 const path = require('path');
 const file = Files();
+const customer = Customers();
 
 
 // check if an id is a valid MongoDB ObjectId
@@ -14,7 +15,6 @@ const isValidObjectId = (id) => {
 
 const getCustomerDetails = async (id) => {
     if (typeof id !== "string" || !isValidObjectId(id)) return { status: "Fail", message: `Invalid Object Id ${id}`, doc: {} };
-    const customer = Customers();
     try {
         const matchedDocument = await customer.findOne({ _id: id });
         if (!matchedDocument) return { status: "Fail", message: `No match for customer_id ${id}`, doc: {} }
@@ -58,32 +58,83 @@ const getFileObject = async (id) => {
     }
 }
 
-module.exports.shareFileController = async (req, res) => {
-    const { id, message, receipients, user_id } = req.body;
-    const validReceipientEmails = Array.isArray(receipients) ? receipients.filter((receipient) => (emailregexp.test(receipient))) : [];
-    const invalidRecientEmails = Array.isArray(receipients) ? receipients.filter((receipient) => (!emailregexp.test(receipient))) : [];
+const runUpdates = async (id, sharedId, user_id, responseFromMailer) => {
+    await file.updateOne(
+        { _id: id, "shared._id": sharedId },
+        { $set: { "shared.$.status": "success" } }
+    );
 
-    if (validReceipientEmails.length === 0) return res.status(400).json({ message: "Invalid receipient emails" })
+    await file.updateOne(
+        { _id: id, "shared._id": sharedId },
+        { $push: { "shared.$.recipients": { $each: responseFromMailer.recipients } } }
+    );
 
+    await customer.findOneAndUpdate({ _id: user_id }, {
+        $push: { mailed: id }
+    });
+}
+
+const queueRequestForProcessisng = (id, user_id, sharedId, validRecipientEmails, message) => {
     try {
-        const sender = await getCustomerDetails(user_id);
-        if (sender.status === "Fail") return res.status(404).json({ "message": sender.message, invalidRecientEmails });
+        setTimeout(async () => {
+            const sender = await getCustomerDetails(user_id);
+            const fileItem = await getFileObject(id);
 
-        const fileItem = await getFileObject(id);
-        if (fileItem.status === "Fail") return res.status(404).json({ "message": fileItem.message, invalidRecientEmails });
+            if ((fileItem.status === "Fail") || (sender.status === "Fail")) {
+                return await file.updateOne(
+                    {id: id, "shared._id": sharedId},
+                    {$set: {"shared.$.status": "failed"}}
+                )
+            }
 
-        const responseFromMailer = await mailer.sendFilesViaEmail([fileItem.doc], validReceipientEmails, sender.doc.email, message);
-        console.log(responseFromMailer)
-        if (responseFromMailer.state === "Failed") {
-            return res.status(400).json({ message: responseFromMailer.message, invalidRecientEmails });
-        }
+            const responseFromMailer = await mailer.sendFilesViaEmail([fileItem.doc], validRecipientEmails, sender.doc.email, message);
+            
+            if (responseFromMailer.state === "Failed") {
 
-        //update fileDocuments [ mailed property ]
+                return await file.updateOne(
+                    {id: id, "shared._id": sharedId},
+                    {$set: {"shared.$.status": "failed"}}
+                )
+            }
 
-        return res.status(200).json({ message: "Email sent successfully", invalidRecientEmails });
+            await runUpdates(id, sharedId, user_id, responseFromMailer);
+
+        }, 5000);
 
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: "An unexpected error occured" });
+        logError(error, req.url, "sendFilesViaEmail");
+
+        return file.updateOne(
+            {id: id, "shared.id": sharedId},
+            {$set: {"shared.$.status": "failed"}}
+        ).then(()=> {return})
+        .catch((er) => console.log(er));
     }
+}
+
+module.exports.shareFileController = async (req, res) => {
+    const { id, message, recipients, user_id } = req.body;
+    const validRecipientEmails = Array.isArray(recipients) ? recipients.filter((receipient) => (emailregexp.test(receipient))) : [];
+    const invalidRecipientEmails = Array.isArray(recipients) ? recipients.filter((receipient) => (!emailregexp.test(receipient))) : [];
+
+    if (validRecipientEmails.length === 0) return res.status(400).json({ message: "Invalid receipient emails" })
+
+    res.status(202).json({ message: "Request is been processed", invalidRecipientEmails });
+    const updatedFile = await file.findOneAndUpdate(
+        { _id: id },
+        {
+            $push: {
+                shared: {
+                    from: user_id,
+                    recipients: recipients,
+                    status: "pending"
+                }
+            }
+        },
+        { new: true, useFindAndModify: false }
+    );
+    const sharedObj = updatedFile.shared[updatedFile.shared.length - 1]
+    const sharedId = sharedObj._id;
+
+    queueRequestForProcessisng(id, user_id, sharedId, validRecipientEmails, message);
 }

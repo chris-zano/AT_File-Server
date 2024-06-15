@@ -167,10 +167,9 @@ module.exports.sendFilesViaEmail = async (fileObjects = [], recipients = [], use
     options.html = createEmailTemplateForFileSharing(username, finalMessage);
     options.attachments = fileObjects.map((file) => ({ filename: file.filename, path: file.path }));
 
+
     try {
-        console.log("[ mailer ]::// ",transporter.options, options)
         const response = await transportMail(options);
-        console.log("[ mailer-response ]::// ",response)
         return {
             state: "Success",
             message: response.messageId,

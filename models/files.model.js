@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
+const { emailRegexp } = require("../utils/mailer.utils");
 const Schema = mongoose.Schema;
+const emailRegex = emailRegexp()
 
 const fileSchema = new Schema({
     admin_id: {
@@ -39,8 +41,23 @@ const fileSchema = new Schema({
         type: String,
         required: true
     },
-    downloads: [{type: mongoose.Types.ObjectId, ref: "Customers"}],
-    shared: [{from: {type: mongoose.Types.ObjectId, ref: "Customers"}, to: []}],
+    downloads: [{ type: mongoose.Types.ObjectId, ref: "Customers" }],
+    shared: [{
+        from: { type: mongoose.Types.ObjectId, ref: "Customers" },
+        recipients: [{
+            type: "String",
+            validate: {
+                validator: function (v) {
+                    return emailRegex.test(v)
+                }
+            }
+        }],
+        status: {
+            type: String,
+            enum: ["pending", "failed", "success"]
+        },
+        log: {type: String}
+    }],
     visibility: String,
     type: {
         type: String,
@@ -66,23 +83,15 @@ fileSchema.virtual('download_details', {
     foreignField: '_id'
 });
 
-fileSchema.virtual('shared_details', {
-    ref: 'Customers',
-    localField: 'shared',
-    foreignField: '_id'
-});
-
 
 fileSchema.pre('find', function () {
     this.populate('admin_details', '_id username email')
         .populate('download_details', '_id username email')
-        .populate('shared_details', '_id username email');
 });
 
 fileSchema.pre('findOne', function () {
     this.populate('admin_details', '_id username email')
         .populate('download_details', '_id username email')
-        .populate('shared_details', '_id username email');
 });
 
 fileSchema.pre('findOneAndUpdate', function (next) {
