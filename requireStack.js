@@ -1,6 +1,7 @@
 const setupWebSocketServer = require('./utils/socket.utils');
+require('dotenv').config();
 
-const callAndExecuteRequireStack = (app, server) => {
+module.exports.callAndExecuteRequireStack = (app, server) => {
      const io = setupWebSocketServer(server);
      //require routes here
      const adminViewRoutes = require('./routes/admin-view.routes');
@@ -26,4 +27,11 @@ const callAndExecuteRequireStack = (app, server) => {
      app.use(userRoutes);
 };
 
-module.exports = {callAndExecuteRequireStack};
+module.exports.getEmailAuthCredentials = () => {
+     const EMAIL_AUTH = {
+          user: process.env.SYSTEM_EMAIL,
+          pass: process.env.SYSTEM_EMAIL_PASSWORD
+     };
+
+     return EMAIL_AUTH;
+};
