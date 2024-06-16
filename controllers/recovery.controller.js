@@ -28,7 +28,7 @@ module.exports.recovery_VerifyEmail = async (req, res) => {
 
     try {
         const responseFromMailer = await sendVerificationCode(email);
-        const new_code_entry = new Code({ receipient_email: responseFromMailer.receipient_email[0], code: responseFromMailer["verify-code"], messageId: responseFromMailer.messageId });
+        const new_code_entry = new Code({ recipient_email: responseFromMailer.recipient_email[0], code: responseFromMailer["verify-code"], messageId: responseFromMailer.messageId });
 
         const codeObject = await new_code_entry.save();
 
@@ -42,7 +42,7 @@ module.exports.recovery_VerifyEmail = async (req, res) => {
 module.exports.recovery_VerifyCode = async (req, res) => {
     const { cid, code, email } = req.query;
 
-    const codeMatch = await Code.findOne({ _id: cid, code: code, receipient_email: email });
+    const codeMatch = await Code.findOne({ _id: cid, code: code, recipient_email: email });
     if (!codeMatch) {
         res.status(409).json({ message: "Invalid Code" });
         return;

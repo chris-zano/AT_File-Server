@@ -59,7 +59,7 @@ module.exports.initiateSignUpSequence = async (req, res) => {
 
     try {
         const responseFromMailer = await sendVerificationCode(email)
-        const new_code_entry = new Code({ receipient_email: responseFromMailer.receipient_email[0], code: responseFromMailer["verify-code"], messageId: responseFromMailer.messageId });
+        const new_code_entry = new Code({ recipient_email: responseFromMailer.recipient_email[0], code: responseFromMailer["verify-code"], messageId: responseFromMailer.messageId });
 
         const codeObject = await new_code_entry.save();
 

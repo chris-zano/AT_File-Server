@@ -13,16 +13,6 @@ module.exports.emailRegexp = () => {
 
 const system_email = "no-reply.atfs@hotmail.com";
 
-const generateVerificationCode = () => {
-    return randomstring.generate({
-        length: 6,
-        charset: 'alphanumeric'
-    });
-}
-
-
-
-
 const transportMail = async (options) => {
     // const response = await transporter.sendMail(options); //old code
     // return response;
@@ -30,6 +20,7 @@ const transportMail = async (options) => {
     // fork a child process and parse the options as argument
     return new Promise((resolve, reject) => {
         const child = fork(path.join(__dirname, 'process.mailer.utils.js'))
+        // console.log("A new child process has been forked with pid of: ", child.pid);
 
         child.send(options);
 
@@ -53,7 +44,7 @@ const transportMail = async (options) => {
     })
 }
 
-module.exports.sendVerificationCode = async (recipient_email) => {
+module.exports.sendVerificationCode = async (recipient_email, verificationCode) => {
 
     if (!(EMAIL_REGEXP.test(recipient_email))) {
         return {
@@ -61,8 +52,6 @@ module.exports.sendVerificationCode = async (recipient_email) => {
             message: "Invalid Email"
         }
     }
-
-    const verificationCode = generateVerificationCode();
 
     const options = {
         from: system_email,
@@ -72,12 +61,7 @@ module.exports.sendVerificationCode = async (recipient_email) => {
     }
 
     try {
-        const response = await transportMail(options);
-        return {
-            messageId: response.messageId,
-            recipient_email: response.accepted,
-            "verify-code": verificationCode,
-        }
+        transportMail(options);
     }
     catch (error) {
         logError(error, "/system/mail-verification-code", "transportMail(options:any)");

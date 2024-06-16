@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 
 const codeSchema = new Schema({
-    receipient_email: {
+    recipient_email: {
         type: String,
         required: true,
         unique:false,
@@ -11,10 +11,6 @@ const codeSchema = new Schema({
     code: {
         type: String,
         required: true
-    },
-    messageId: {
-        type: String,
-        default:""
     }
 },{timestamps: true});
 

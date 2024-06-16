@@ -50,6 +50,13 @@ module.exports.authenticateAdminLogin = async (req, res) => {
     res.status(200).json({ message: "success", user });
 }
 
+const generateVerificationCode = () => {
+    return randomstring.generate({
+        length: 6,
+        charset: 'alphanumeric'
+    });
+}
+
 module.exports.verifyEmail = async (req, res) => {
     const { email } = req.body;
 
@@ -66,8 +73,9 @@ module.exports.verifyEmail = async (req, res) => {
     }
 
     try {
-        const responseFromMailer = await sendVerificationCode(email)
-        const new_code_entry = new Code({ receipient_email: responseFromMailer.receipient_email[0], code: responseFromMailer["verify-code"], messageId: responseFromMailer.messageId });
+        const verificationCode = generateVerificationCode();
+        const responseFromMailer = await sendVerificationCode(email, verificationCode)
+        const new_code_entry = new Code({ recipient_email: responseFromMailer.recipient_email, code: verificationCode });
 
         const codeObject = await new_code_entry.save();
 

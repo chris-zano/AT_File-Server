@@ -114,10 +114,10 @@ const queueRequestForProcessisng = (id, user_id, sharedId, validRecipientEmails,
 
 module.exports.shareFileController = async (req, res) => {
     const { id, message, recipients, user_id } = req.body;
-    const validRecipientEmails = Array.isArray(recipients) ? recipients.filter((receipient) => (emailregexp.test(receipient))) : [];
-    const invalidRecipientEmails = Array.isArray(recipients) ? recipients.filter((receipient) => (!emailregexp.test(receipient))) : [];
+    const validRecipientEmails = Array.isArray(recipients) ? recipients.filter((recipient) => (emailregexp.test(recipient))) : [];
+    const invalidRecipientEmails = Array.isArray(recipients) ? recipients.filter((recipient) => (!emailregexp.test(recipient))) : [];
 
-    if (validRecipientEmails.length === 0) return res.status(400).json({ message: "Invalid receipient emails" })
+    if (validRecipientEmails.length === 0) return res.status(400).json({ message: "Invalid recipient emails" })
 
     res.status(202).json({ message: "Request is been processed", invalidRecipientEmails });
     const updatedFile = await file.findOneAndUpdate(

@@ -88,7 +88,7 @@ router.get('/sessions/:user_permission/password-reset', async (req, res) => {
         if (doc && Object.keys(doc).length !== 0) {
             const mailedResponse = await alertUserOfPasswordResetAttempt(doc.verified_user.email, doc.verified_user.username, doc.verified_user._id, user_permission === "admin" ? "system-undefined" : "system-not-null");
 
-            if (mailedResponse.messageId && mailedResponse.receipient_email.length !== 0) {
+            if (mailedResponse.messageId && mailedResponse.recipient_email.length !== 0) {
                 return res.status(200).json({ message: "A password reset link has been sent to your email." });
             }
             else {

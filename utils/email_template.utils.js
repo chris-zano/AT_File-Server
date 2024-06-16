@@ -56,7 +56,7 @@ function createEmailTemplateForVerificationCode(verificationCode) {
     return emailTemplate;
 }
 
-function createEmailTemplateForPasswordResetAttempt(receipient_email, username, userId, admin) {
+function createEmailTemplateForPasswordResetAttempt(recipient_email, username, userId, admin) {
     const emailTemplate = `
     <!DOCTYPE html>
     <html>
@@ -123,7 +123,7 @@ function createEmailTemplateForPasswordResetAttempt(receipient_email, username, 
             </div>
             <div class="content">
                 <p>Hello ${username},</p>
-                <p>We received a request to reset your password for yout AT File Server account with email ${receipient_email}</p>
+                <p>We received a request to reset your password for yout AT File Server account with email ${recipient_email}</p>
                 <p>Click the button below to reset it.</p>
                 <a href="http://localhost:3300/sessions/reset-user-password/${encodeURIComponent(admin)}/${encodeURIComponent(userId)}" class="button" >Reset Password</a>
                 <p>If you did not request a password reset, please ignore this email or contact support if you have any questions.</p>
