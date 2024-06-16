@@ -1,10 +1,9 @@
-const nodemailer = require("nodemailer");
 const path = require('path')
 const randomstring = require("randomstring");
 const { createEmailTemplateForVerificationCode, createEmailTemplateForPasswordResetAttempt, createEmailTemplateForPasswordResetConfirmation, createEmailTemplateForFileSharing } = require("./email_template.utils");
 const { logError } = require("./logs.utils");
-const { getEmailAuthCredentials } = require('../requireStack');
-const EMAIL_AUTH = getEmailAuthCredentials();
+const { fork } = require('child_process');
+
 
 const EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -21,23 +20,37 @@ const generateVerificationCode = () => {
     });
 }
 
-const transporter = nodemailer.createTransport({
-    service: "hotmail",
-    auth: { ...EMAIL_AUTH }
-});
-
-const options = {
-    from: system_email,
-    to: "",
-    subject: "",
-    html: "",
-}
 
 
 
 const transportMail = async (options) => {
-    const response = await transporter.sendMail(options);
-    return response;
+    // const response = await transporter.sendMail(options); //old code
+    // return response;
+
+    // fork a child process and parse the options as argument
+    return new Promise((resolve, reject) => {
+        const child = fork(path.join(__dirname, 'process.mailer.utils.js'))
+
+        child.send(options);
+
+        child.on("message", (results) => {
+            //kill the child
+            child.kill();
+
+            if (results.status === "success") {
+                resolve(results.response);
+            }
+            else {
+                reject(results.response);
+            }
+        });
+
+        child.on("error", (error) => {
+            //kill the child
+            child.kill();
+            reject(error);
+        });
+    })
 }
 
 module.exports.sendVerificationCode = async (recipient_email) => {
@@ -50,9 +63,13 @@ module.exports.sendVerificationCode = async (recipient_email) => {
     }
 
     const verificationCode = generateVerificationCode();
-    options.to = recipient_email;
-    options.subject = "(AT-File Server): Here is your verification code!";
-    options.html = createEmailTemplateForVerificationCode(verificationCode);
+
+    const options = {
+        from: system_email,
+        to: recipient_email,
+        subject: "(AT-File Server): Here is your verification code!",
+        html: createEmailTemplateForVerificationCode(verificationCode)
+    }
 
     try {
         const response = await transportMail(options);
@@ -76,9 +93,12 @@ module.exports.alertUserOfPasswordResetAttempt = async (recipient_email, usernam
         }
     }
 
-    options.to = recipient_email;
-    options.subject = "(AT-File Server): Password Reset Attempt";
-    options.html = createEmailTemplateForPasswordResetAttempt(recipient_email, username, userId, admin);
+    const options = {
+        from: system_email,
+        to: recipient_email,
+        subject: "(AT-File Server): Password Reset Attempt",
+        html: createEmailTemplateForPasswordResetAttempt(recipient_email, username, userId, admin)
+    }
 
     try {
         const response = await transportMail(options);
@@ -101,9 +121,12 @@ module.exports.informUserOfSuccessfulPasswordReset = async (recipient_email) => 
         }
     }
 
-    options.to = recipient_email;
-    options.subject = "(AT-File Server): Your Password Has Been Changed";
-    options.html = createEmailTemplateForPasswordResetConfirmation();
+    const options = {
+        from: system_email,
+        to: recipient_email,
+        subject: "(AT-File Server): Your Password Has Been Changed",
+        html: createEmailTemplateForPasswordResetConfirmation()
+    }
 
     try {
         const response = await transportMail(options);
@@ -151,7 +174,7 @@ module.exports.sendFilesViaEmail = async (fileObjects = [], recipients = [], use
 
     const validFileObjects = fileObjects.filter((obj) => isFileObjectValid(obj));
     if (validFileObjects.length === 0) {
-        return{
+        return {
             state: "Failed",
             message: "[ ArgumentError ] :: No valid file objects",
             recipients: undefined,
@@ -162,11 +185,18 @@ module.exports.sendFilesViaEmail = async (fileObjects = [], recipients = [], use
     const defaultMessage = "Please find the attached files below. If you have any questions, feel free to reach out."
     const finalMessage = message.length === 0 ? defaultMessage : message;
 
-    options.to = recipients;
-    options.subject = "(AT-File Server): A File Has Been Shared With You";
-    options.html = createEmailTemplateForFileSharing(username, finalMessage);
-    options.attachments = fileObjects.map((file) => ({ filename: file.filename, path: file.path }));
-
+    const options = {
+        from: system_email,
+        to: recipients,
+        subject: "(AT-File Server): A File Has Been Shared With You",
+        html: createEmailTemplateForFileSharing(username, finalMessage),
+        attachments: fileObjects.map((file) => (
+            {
+                filename: file.filename,
+                path: file.path
+            }
+        ))
+    }
 
     try {
         const response = await transportMail(options);
