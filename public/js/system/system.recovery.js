@@ -24,7 +24,7 @@ const recoveryMain = async () => {
         try {
             const response = await fetch(url);
             const data = await response.json();
-            if (response.status !== 200) {
+            if (response.status !== 202) {
                 getId("create-account").classList.remove("hidden");
                 return Toast_Notification.showError(data.error);
             }

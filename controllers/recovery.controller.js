@@ -5,9 +5,23 @@ const { hashPassword, comparePassword } = require("../utils/password.utils");
 const email_Regex = emailRegexp();
 const Code = Codes();
 const modeToCollection = { "admin": Admins, "customer": Customers };
+const crypto = require('crypto');
+const randomstring = require("randomstring");
+
+const generateTempId = () => {
+    return crypto.randomUUID();
+}
+
+const generateVerificationCode = () => {
+    return randomstring.generate({
+        length: 6,
+        charset: 'alphanumeric'
+    });
+}
 
 module.exports.recovery_VerifyEmail = async (req, res) => {
     const { email, mode } = req.params;
+    console.log({ email, mode })
 
     if (!email || !mode) {
         return res.status(400).json({ error: "bad request" });
@@ -20,19 +34,20 @@ module.exports.recovery_VerifyEmail = async (req, res) => {
         return res.status(400).json({ error: "bad request" });
     }
 
-    const email_exists = await matchModeToCollection().findOne({ email: email });
-    console.log(email_exists);
-    if (!email_exists) {
-        return res.status(404).json({ error: "email does not exist" });
-    }
 
     try {
-        const responseFromMailer = await sendVerificationCode(email);
-        const new_code_entry = new Code({ recipient_email: responseFromMailer.recipient_email[0], code: responseFromMailer["verify-code"], messageId: responseFromMailer.messageId });
+        const email_exists = await matchModeToCollection().findOne({ email: email });
 
-        const codeObject = await new_code_entry.save();
+        if (!email_exists) {
+            return res.status(404).json({ error: "email does not exist" });
+        }
 
-        return res.status(200).json({ id: codeObject._id });
+        const verificationCode = generateVerificationCode(), tempId = generateTempId();
+
+        res.status(202).json({ id: tempId });
+
+        await sendVerificationCode(email, verificationCode, tempId);
+
     } catch (error) {
         logError(error, "/admins/signup/initiate", "verifyEmail");
         return res.status(500).json({ error: "Failed to send verification code" });
@@ -42,24 +57,28 @@ module.exports.recovery_VerifyEmail = async (req, res) => {
 module.exports.recovery_VerifyCode = async (req, res) => {
     const { cid, code, email } = req.query;
 
-    const codeMatch = await Code.findOne({ _id: cid, code: code, recipient_email: email });
-    if (!codeMatch) {
-        res.status(409).json({ message: "Invalid Code" });
-        return;
-    }
+    try {
+        const codeMatch = await Code.findOne({ tempId: cid, code: code, recipient_email: email });
+        if (!codeMatch) {
+            return res.status(409).json({ message: "Invalid Code" });
+        }
 
-    res.status(200).json({ message: "success" });
+       return res.status(200).json({ message: "success" });
+    } catch (error) {
+        logError(error, req.url, "recovery_VerifyCode");
+        return res.status(500).json({message: "Internal server error"})
+    }
 }
 
 module.exports.recovery_SetNewPassword = async (req, res) => {
     const { email, password } = req.body;
-    const {mode} = req.params
+    const { mode } = req.params
 
     try {
         const hashedPassword = await hashPassword(password);
         const matchModeToCollection = modeToCollection[mode];
 
-        await matchModeToCollection().updateOne({email: email}, {
+        await matchModeToCollection().updateOne({ email: email }, {
             $set: {
                 password: hashedPassword.hashedPassword,
                 password_salt: hashedPassword.salt

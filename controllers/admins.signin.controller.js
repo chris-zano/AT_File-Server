@@ -5,13 +5,19 @@ const { hashPassword, comparePassword } = require("../utils/password.utils");
 const email_Regex = emailRegexp();
 const Admin = Admins();
 const Code = Codes();
-const crypto = require('crypto');
 const randomstring = require("randomstring");
+const crypto = require('crypto');
 
 const generateTempId = () => {
     return crypto.randomUUID();
 }
 
+const generateVerificationCode = () => {
+    return randomstring.generate({
+        length: 6,
+        charset: 'alphanumeric'
+    });
+}
 
 module.exports.authenticateAdminLogin = async (req, res) => {
     const { username, password } = req.body;
@@ -54,13 +60,6 @@ module.exports.authenticateAdminLogin = async (req, res) => {
     logSession(username, req.ip, "Success");
     const user = { id: userMatch._id, username: userMatch.username, email: userMatch.email, __v: userMatch.__v }
     res.status(200).json({ message: "success", user });
-}
-
-const generateVerificationCode = () => {
-    return randomstring.generate({
-        length: 6,
-        charset: 'alphanumeric'
-    });
 }
 
 module.exports.verifyEmail = async (req, res) => {
