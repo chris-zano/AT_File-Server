@@ -4,6 +4,7 @@ const mailer = require('../utils/mailer.utils');
 const emailregexp = mailer.emailRegexp();
 const mongoose = require('mongoose');
 const path = require('path');
+const fs = require("fs");
 const file = Files();
 const customer = Customers();
 
@@ -195,13 +196,13 @@ module.exports.updateProfilePicture = async (req, res) => {
     const { filename } = req.file;
     const { old_filename } = req.params;
 
-    if (old_filename) {
+    if (old_filename !== "null") {
         try {
             const current_userImagePath = path.join(__dirname, "..", "AT-FS", "images", "profile_pictures", old_filename);
             if (fs.existsSync(current_userImagePath)) fs.rm(current_userImagePath, (console.error))
         } catch (error) {
             logError(error, req.url, "updateProfilePicture~ delete_current_profilePicture");
-            return res.status(500).redirect(`/admin/views/profile/${id}`);
+            return res.status(500).redirect(`/users/views/profile/${id}`);
         }
     }
 

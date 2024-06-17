@@ -11,17 +11,17 @@
             </div>
             <script>
                 const changeProfilePic = (e) => {
-                    const id = JSON.parse(window.sessionStorage.getItem("session-admin"));
+                    const id = JSON.parse(window.sessionStorage.getItem("session-user"));
 
                     if (!id) {
-                        return window.location.replace(`/error/400/${encodeURIComponent("/user/views/profile/<%= id %>")}/${encodeURIComponent("sessionStorage has id call (session-admin) as " + id)}`);
+                        return window.location.replace(`/error/400/${encodeURIComponent("/user/views/profile/<%= id %>")}/${encodeURIComponent("sessionStorage has id call (session-user) as " + id)}`);
                     }
 
-                    const oldProfilePictureFilename = document.getElementById("profile_picture_url").getAttribute("src").includes("system/images") ? "" : document.getElementById("profile_picture_url").getAttribute("src").slice(document.getElementById("profile_picture_url").getAttribute("src").lastIndexOf("/") + 1);
+                    const oldProfilePictureFilename = document.getElementById("profile_picture_url").getAttribute("src").includes("system/images") ? "null" : document.getElementById("profile_picture_url").getAttribute("src").slice(document.getElementById("profile_picture_url").getAttribute("src").lastIndexOf("/") + 1);
 
                     const updatePPForm = document.createElement("form");
                     updatePPForm.method = "post";
-                    updatePPForm.action = `/users/profile/update-component/profile-picture/${id}/${oldProfilePictureFilename}`;
+                    updatePPForm.action = `/users/profile/update-component/profile-picture/${id.trim()}/${oldProfilePictureFilename.trim()}`;
                     updatePPForm.enctype = "multipart/form-data";
                     updatePPForm.innerHTML = `
                                     <input type="file" name="profile_picture" required="true" id="file-input" />
@@ -41,58 +41,9 @@
                 }
             </script>
 
-                <div class="info">
+                <div class="change-password">
                     <button onclick="changePassword(event)" id="password-btn-ch">Change Password</button>
                 </div>
-                <style>
-                    /* styles.css */
-                .form-container {
-                    background-color: #fff;
-                    padding: 20px;
-                    border-radius: 8px;
-                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                    width: 300px;
-                }
-                
-                form h1 {
-                    margin-bottom: 20px;
-                    font-size: 24px;
-                    text-align: center;
-                }
-                
-                .form-group {
-                    margin-bottom: 15px;
-                }
-                
-                .form-group label {
-                    display: block;
-                    margin-bottom: 5px;
-                }
-                
-                .form-group input {
-                    width: 100%;
-                    padding: 8px;
-                    box-sizing: border-box;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                }
-                
-                button {
-                    width: 100%;
-                    padding: 10px;
-                    border: none;
-                    background-color: #007bff;
-                    color: white;
-                    font-size: 16px;
-                    border-radius: 4px;
-                    cursor: pointer;
-                }
-                
-                button:hover {
-                    background-color: #0056b3;
-                }
-                
-                </style>
                 <div class="form-container">
                     <form action="/submit" method="POST">
                         <h1>User Information</h1>
@@ -127,7 +78,7 @@
                             console.log(`Data is :`, data);
                             console.log(`Status is ${status}`);
 
-                            Toast_Notification.showInfo(data.message);
+                            window.alert(data.message);
 
                             //terminate user session
                             window.sessionStorage.removeItem("session-user");

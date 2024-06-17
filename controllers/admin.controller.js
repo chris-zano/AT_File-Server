@@ -11,7 +11,7 @@ module.exports.updateProfilePicture = async (req, res) => {
     const { filename } = req.file;
     const { old_filename } = req.params;
 
-    if (old_filename) {
+    if (old_filename !== "null") {
         try {
             const current_userImagePath = path.join(__dirname, "..", "AT-FS", "images", "profile_pictures", old_filename);
             if (fs.existsSync(current_userImagePath)) fs.rm(current_userImagePath, (console.error))

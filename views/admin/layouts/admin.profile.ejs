@@ -18,7 +18,7 @@
                         return
                     }
 
-                    const oldProfilePictureFilename = document.getElementById("profile_picture_url").getAttribute("src").includes("system/images") ? "" : document.getElementById("profile_picture_url").getAttribute("src").slice(document.getElementById("profile_picture_url").getAttribute("src").lastIndexOf("/") + 1);
+                    const oldProfilePictureFilename = document.getElementById("profile_picture_url").getAttribute("src").includes("system/images") ? "null" : document.getElementById("profile_picture_url").getAttribute("src").slice(document.getElementById("profile_picture_url").getAttribute("src").lastIndexOf("/") + 1);
 
                     const updatePPForm = document.createElement("form");
                     updatePPForm.method = "post";
@@ -103,7 +103,7 @@
                             console.log(`Data is :`, data);
                             console.log(`Status is ${status}`);
 
-                            Toast_Notification.showInfo(data.message);
+                            window.alert(data.message);
 
                             //terminate user session
                             window.sessionStorage.removeItem("session-admin");
