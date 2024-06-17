@@ -5,11 +5,17 @@ const { hashPassword, comparePassword } = require("../utils/password.utils");
 const email_Regex = emailRegexp();
 const Admin = Admins();
 const Code = Codes();
+const crypto = require('crypto');
+const randomstring = require("randomstring");
+
+const generateTempId = () => {
+    return crypto.randomUUID();
+}
 
 
 module.exports.authenticateAdminLogin = async (req, res) => {
     const { username, password } = req.body;
-    console.log({username, password})
+    console.log({ username, password })
 
     if (!username || !password) {
         logSession("no_user_name", req.ip, "Failed");
@@ -59,61 +65,64 @@ const generateVerificationCode = () => {
 
 module.exports.verifyEmail = async (req, res) => {
     const { email } = req.body;
-
-    if (!email) {
-        res.status(400);
-    }
-
-    const email_exists = await Admin.findOne({ email: email });
-    console.log(email_exists);
-
-    if (email_exists) {
-        res.status(409).json({ error: "email already in use" });
-        return;
-    }
+    if (!email) return res.status(400);
 
     try {
-        const verificationCode = generateVerificationCode();
-        const responseFromMailer = await sendVerificationCode(email, verificationCode)
-        const new_code_entry = new Code({ recipient_email: responseFromMailer.recipient_email, code: verificationCode });
+        const email_exists = await Admin.findOne({ email: email });
+        if (email_exists !== null) return res.status(409).json({ error: "email already in use" });
 
-        const codeObject = await new_code_entry.save();
+        const verificationCode = generateVerificationCode(), tempId = generateTempId();
+        res.status(202).json({ id: tempId });
 
-        res.status(200).json({ id: codeObject._id });
-        return;
+        try {
+            return await sendVerificationCode(email, verificationCode, tempId);
+        } catch (error) {
+            logError(new Error(error), req.url, "verifyEmail[async mailer::try-catch]");
+            return;
+        }
 
     } catch (error) {
         logError(error, "/admins/signup/initiate", "verifyEmail");
-        res.status(500).json({ error: "Failed to send verification code" });
+        return res.status(500).json({ error: "Failed to send verification code" });
     }
 }
 
 module.exports.verifyCode = async (req, res) => {
     const { codeId, user_input } = req.body;
 
-    const codeMatch = await Code.findOne({ _id: codeId, code: user_input });
-    if (!codeMatch) {
-        res.status(409).json({ message: "Invalid Code" });
-        return;
+    try {
+        const codeMatch = await Code.findOne({ tempId: codeId, code: user_input });
+        if (!codeMatch) {
+            return res.status(409).json({ message: "Invalid Code" });
+        }
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Internal Server error" });
     }
 
-    res.status(200).json({ message: "success" });
+    return res.status(200).json({ message: "success" });
 }
 
 module.exports.setNewAdminPassword = async (req, res) => {
     const { email, user_password } = req.body;
 
+    console.log({ email, user_password })
     try {
         const hashedPassword = await hashPassword(user_password);
 
-        const new_admin = new Admin({ email: email, password: hashedPassword.hashedPassword, password_salt: hashedPassword.salt });
-
-        const admin = await new_admin.save();
-
-        res.status(200).json({ user: { id: admin._id, email: admin.email, username: admin.username, profilePicURL: admin.profilePicURL } });
+        if (hashedPassword.error === null) {
+            const new_admin = new Admin({ email: email, password: hashedPassword.hashedPassword, password_salt: hashedPassword.salt });
+            const admin = await new_admin.save();
+            return res.status(200).json({ user: { id: admin._id, email: admin.email, username: admin.username, profilePicURL: admin.profilePicURL }, message: "Success" });
+        }
+        else {
+            console.log("HashPassword Error::// ", hashedPassword.error);
+            return res.status(400).json({ user: {}, message: "Invalid Password" });
+        }
 
     } catch (error) {
         logError(error, "/admins/signup/set-password", "setNewAdminPassword");
-        res.status(500);
+        return res.status(500).json({message: "An unexpected error occured"});
     }
 }

@@ -18,6 +18,7 @@ function addSuperscript(num) {
 }
 
 module.exports.logError = (error, url, callFunction) => {
+    console.error(error)
     const stackTrace = error.stack;
     const errorCode = error.code || "Unknown";
 

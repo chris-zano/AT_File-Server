@@ -11,6 +11,10 @@ const codeSchema = new Schema({
     code: {
         type: String,
         required: true
+    },
+    tempId: {
+        type: String,
+        required: true
     }
 },{timestamps: true});
 

@@ -1,8 +1,9 @@
 const path = require('path')
-const randomstring = require("randomstring");
 const { createEmailTemplateForVerificationCode, createEmailTemplateForPasswordResetAttempt, createEmailTemplateForPasswordResetConfirmation, createEmailTemplateForFileSharing } = require("./email_template.utils");
 const { logError } = require("./logs.utils");
 const { fork } = require('child_process');
+const codesModel = require('../models/codes.model');
+const Code = codesModel;
 
 
 const EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -44,12 +45,13 @@ const transportMail = async (options) => {
     })
 }
 
-module.exports.sendVerificationCode = async (recipient_email, verificationCode) => {
+module.exports.sendVerificationCode = async (recipient_email, verificationCode, tempId) => {
 
     if (!(EMAIL_REGEXP.test(recipient_email))) {
         return {
             operationStatus: "Failed",
-            message: "Invalid Email"
+            message: "Invalid Email",
+            accepted: []
         }
     }
 
@@ -61,11 +63,55 @@ module.exports.sendVerificationCode = async (recipient_email, verificationCode) 
     }
 
     try {
-        transportMail(options);
+        transportMail(options).then(async (response) => {
+            // console.log(`Response from mailer is : `, response)
+            if (response.accepted.length != 0 && response.rejected.length === 0) {
+                try {
+                    const new_code_entry = new Code({ recipient_email: response.accepted[0], code: verificationCode, tempId: tempId });
+                    await new_code_entry.save();
+                }
+                catch(error) {
+                    console.log("Error saving code: ", error)
+                    return {
+                        operationStatus: "Failed",
+                        message: error,
+                        accepted: []
+                    }
+                }
+            }
+            else {
+                console.log({
+                    operationStatus: "Failed",
+                    message: "Email address is invalid",
+                    accepted: []
+                });
+                return {
+                    operationStatus: "Failed",
+                    message: "Email address is invalid",
+                    accepted: []
+                }
+            }
+        }).catch((error) => {
+            console.log({
+                operationStatus: "Failed",
+                message: "Failed to send email",
+                accepted: []
+            });
+            console.log("Catch error::// ", error)
+            return {
+                operationStatus: "Failed",
+                message: error,
+                accepted: []
+            }
+        })
     }
     catch (error) {
         logError(error, "/system/mail-verification-code", "transportMail(options:any)");
-        return null;
+        return {
+            operationStatus: "Failed",
+            message: "Invalid Email",
+            accepted: []
+        }
     }
 }
 
