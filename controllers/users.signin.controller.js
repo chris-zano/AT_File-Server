@@ -107,7 +107,7 @@ module.exports.setNewPassword = async (req, res) => {
             const new_customer = new Customer({ email: email, password: hashedPassword.hashedPassword, password_salt: hashedPassword.salt });
 
             const customer = await new_customer.save();
-            res.status(200).json({ user: { id: customer._id, email: customer.email, username: customer.username, firstName: customer.firstName, lastName: customer.lastName, profilePicURL: customer.profilePicURL, downloads: customer.downloads, mailed: customer.mailed, favourites: customer.favourites } });
+            res.status(200).json({ user: { id: customer._id, email: customer.email, username: customer.username, firstName: customer.firstName, lastName: customer.lastName, profilePicURL: customer.profilePicURL, downloads: customer.downloads, mailed: customer.mailed, favourites: customer.favourites },  message: "Success"  });
         }
         else {
             console.log("HashPassword Error::// ", hashedPassword.error);

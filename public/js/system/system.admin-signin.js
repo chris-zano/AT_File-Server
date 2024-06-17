@@ -112,7 +112,7 @@ const renderVerificationForm = (codeId) => {
 
                             if (!user_email) { //get users email from session storage
                                 Toast_Notification.showWarning("No valid Email was entered");
-                                container_main.querySelector("#resend-code").innerHTML = '<a href="/signin">Back to sign in</a>';
+                                container_main.querySelector("#resend-code").innerHTML = '<a href="/admin/signin">Back to sign in</a>';
                             }
                             else {
                                 signUp(user_email).then((res) => { // use email to resend a verification code
