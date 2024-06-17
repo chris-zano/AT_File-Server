@@ -55,17 +55,44 @@ module.exports.renderAdminViews = async (req, res) => {
     );
 }
 
-module.exports.renderStoreForUsers = async (req, res) => {
-    const adminDashboardFilesCollection = await File_.find({visibility: "public"}) || [];
-    res.type("text/html");
-    res.set("Cache-Control", "public, max-age=10");
-    res.status(200);
-    res.render('users/users.main.ejs',
-        {
-            pageUrl: "home",
-            scripts_urls: ['/files/scripts/client/client.store.js'],
-            stylesheets_urls: ["/files/css/users/users.css", "/files/css/users/store.css"],
-            files: adminDashboardFilesCollection
+module.exports.renderUserViews = async (req, res) => {
+    const user = req.verifiedUser;
+    console.log("Request user: ", user)
+    const { pageUrl } = req.params;
+
+
+    if (pageUrl === "store") {
+        try {
+            const adminDashboardFilesCollection = await File_.find({ visibility: "public" }) || [];
+
+            res.type("text/html");
+            res.set("Cache-Control", "public, max-age=10");
+            res.status(200);
+
+            res.render('users/users.main.ejs',
+                {
+                    ...user,
+                    pageUrl: "home",
+                    scripts_urls: ['/files/scripts/client/client.store.js'],
+                    stylesheets_urls: ["/files/css/users/users.css", "/files/css/users/store.css"],
+                    files: adminDashboardFilesCollection
+                }
+            );
+        } catch (error) {
+            console.log(error);
+            logError(error, req.url, "renderUserViews");
+            return res.redirect(`/error/${500}/${url}/Internal_server_error`)
         }
-    );
+    }
+    else {
+        res.render('users/users.main.ejs',
+            {
+                ...user,
+                pageUrl: pageUrl,
+                scripts_urls: [`/files/scripts/client/client.${pageUrl}.js`],
+                stylesheets_urls: ["/files/css/users/users.css", `/files/css/users/${pageUrl}.css`],
+
+            }
+        );
+    }
 }

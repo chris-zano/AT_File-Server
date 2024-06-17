@@ -16,13 +16,9 @@
     <main class="store-container">
         <% if (pageUrl === "home") { %>
             <%- include('layouts/user.home.ejs') %>
-        <% } else if (pageUrl === "uploads") { %>
-            <%- include('layouts/user.upload.ejs') %>
-        <% } else if (pageUrl === "settings") { %>
-            <%- include('layouts/user.settings.ejs') %>
         <% } else if (pageUrl === "profile") { %>
             <%- include('layouts/user.profile.ejs') %>
-        <% } %>%>
+        <% } %>
     </main>
 
     <%- include('templates/user.scripts.ejs') %>

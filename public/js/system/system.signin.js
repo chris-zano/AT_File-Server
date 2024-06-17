@@ -153,7 +153,7 @@ const renderVerificationForm = (codeId) => {
                                             if (res.message === "Success") {
                                                 window.sessionStorage.setItem("admin_data", JSON.stringify(res.user));
                                                 window.sessionStorage.setItem("session-admin", JSON.stringify(res.user.id));
-                                                return window.location.replace(`/store`);
+                                                return window.location.replace(`/users/views/store${res.user.id}`);
                                             }
                                             else {
                                                 return alert(res.message);
@@ -207,7 +207,7 @@ const signinMain = () => {
         if (res.message === "success") {
             window.sessionStorage.setItem("user_data", JSON.stringify(res.user));
             window.sessionStorage.setItem("session-user", JSON.stringify(res.user.id));
-            window.location.href = `/store`;
+            window.location.href = `/users/views/store/${res.user.id}`;
         }
     });
 

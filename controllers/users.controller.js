@@ -189,3 +189,35 @@ module.exports.addToDownloads = async (req, res) => {
         return res.status(500).json({ message: "An unexpected error occured" });
     }
 }
+
+module.exports.updateProfilePicture = async (req, res) => {
+    const { id } = req.verifiedUser;
+    const { filename } = req.file;
+    const { old_filename } = req.params;
+
+    if (old_filename) {
+        try {
+            const current_userImagePath = path.join(__dirname, "..", "AT-FS", "images", "profile_pictures", old_filename);
+            if (fs.existsSync(current_userImagePath)) fs.rm(current_userImagePath, (console.error))
+        } catch (error) {
+            logError(error, req.url, "updateProfilePicture~ delete_current_profilePicture");
+            return res.status(500).redirect(`/admin/views/profile/${id}`);
+        }
+    }
+
+    try {
+        const profilePicURL = `/files/users/images/profilePicurl/${filename}`
+        await customer.updateOne({ _id: id }, {
+            $set: {
+                profilePicURL: profilePicURL
+            }
+        });
+
+        return res.status(200).redirect(`/users/views/profile/${id}`);
+    }
+    catch (error) {
+        logError(error, req.url, "updateProfilePicture");
+        return res.status(500).redirect(`/users/views/profile/${id}`);
+    }
+
+}

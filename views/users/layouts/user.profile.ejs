@@ -1,0 +1,81 @@
+<section class="section-profile-main" id="section-profile-main">
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>User Profile</h1>
+        </div>
+        <div class="profile-content">
+            <div class="profile-pic">
+                <img src="<%= profilePicURL ? profilePicURL : '/files/system/images/user_blank.png' %>"
+                    alt="profile picture" id="profile_picture_url">
+                <button onclick="changeProfilePic(event)">Change Profile Picture</button>
+            </div>
+            <script>
+                const changeProfilePic = (e) => {
+                    const id = JSON.parse(window.sessionStorage.getItem("session-admin"));
+
+                    if (!id) {
+                        return window.location.replace(`/error/400/${encodeURIComponent("/user/views/profile/<%= id %>")}/${encodeURIComponent("sessionStorage has id call (session-admin) as " + id)}`);
+                    }
+
+                    const oldProfilePictureFilename = document.getElementById("profile_picture_url").getAttribute("src").includes("system/images") ? "" : document.getElementById("profile_picture_url").getAttribute("src").slice(document.getElementById("profile_picture_url").getAttribute("src").lastIndexOf("/") + 1);
+
+                    const updatePPForm = document.createElement("form");
+                    updatePPForm.method = "post";
+                    updatePPForm.action = `/users/profile/update-component/profile-picture/${id}/${oldProfilePictureFilename}`;
+                    updatePPForm.enctype = "multipart/form-data";
+                    updatePPForm.innerHTML = `
+                                    <input type="file" name="profile_picture" required="true" id="file-input" />
+                        `;
+                    updatePPForm.style.display = "none";
+                    document.getElementById("section-profile-main").append(updatePPForm);
+
+                    updatePPForm.querySelector("#file-input").click();
+
+                    const fileInput = updatePPForm.querySelector("#file-input")
+                    fileInput.addEventListener("change", async (e) => {
+                        if ((e.target.value)) {
+                            updatePPForm.submit();
+                        }
+                    });
+
+                }
+            </script>
+
+                <div class="info">
+                    <button onclick="changePassword(event)" id="password-btn-ch">Change Password</button>
+                </div>
+
+                <script defer>
+                    const changePassword = async (event) => {
+                        
+                        const id = JSON.parse(window.sessionStorage.getItem("session-user"));
+                        const email = JSON.parse(window.sessionStorage.getItem("user_data")).email;
+
+                        try {
+                            const url = `/sessions/customer/password-reset?uid=${encodeURIComponent(id)}&uemail=${encodeURIComponent(email)}`;
+                            const response = await fetch(url);
+                            const data = await response.json();
+                            const status = response.status;
+
+                            console.log(`Data is :`, data);
+                            console.log(`Status is ${status}`);
+
+                            Toast_Notification.showInfo(data.message);
+
+                            //terminate user session
+                            window.sessionStorage.removeItem("session-user");
+                            window.sessionStorage.removeItem("user_data");
+                            window.sessionStorage.clear();
+
+                            window.location.replace("/signin");
+
+
+
+                        }
+                        catch (error) { console.error };
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+</section>
