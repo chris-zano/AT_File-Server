@@ -86,21 +86,14 @@ router.get('/sessions/:user_permission/password-reset', async (req, res) => {
         const doc = await userPermissionMatch(uid, uemail);
 
         if (doc && Object.keys(doc).length !== 0) {
-            const mailedResponse = await alertUserOfPasswordResetAttempt(doc.verified_user.email, doc.verified_user.username, doc.verified_user._id, user_permission === "admin" ? "system-undefined" : "system-not-null");
+            res.status(200).json({ message: "A password reset link has been sent to your email." });
 
-            if (mailedResponse.messageId && mailedResponse.recipient_email.length !== 0) {
-                return res.status(200).json({ message: "A password reset link has been sent to your email." });
-            }
-            else {
-                return res.status(500).json({ message: "An unexpected error occured. Please try again later." })
-            }
+            return await alertUserOfPasswordResetAttempt(doc.verified_user.email, doc.verified_user.username, doc.verified_user._id, user_permission === "admin" ? "system-undefined" : "system-not-null");
         }
-
-        throw new Error;
     } catch (error) {
         //for debugging 
         console.error("Error on line 101: ", error);
-
+        
         logError(error, req.path(), `GET ${req.path()}`);
         res.render("error", { code: 500, message: `An Unexpected error occured` })
     }
@@ -186,9 +179,9 @@ router.post("/session/password-reset/", async (req, res) => {
         }
 
         //send confirmation email to user
-        await informUserOfSuccessfulPasswordReset(email);
+        res.render("accounts/password-changed", { userType: user_type });
+        return await informUserOfSuccessfulPasswordReset(email);
 
-        return res.render("accounts/password-changed", { userType: user_type });
     }
     catch (error) {
         //log errors with the developer logError module
