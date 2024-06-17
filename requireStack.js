@@ -13,6 +13,7 @@ module.exports.callAndExecuteRequireStack = (app, server) => {
      const authRoutes = require('./routes/auth.routes');
      const recoveryRoutes = require('./routes/recovery.routes');
      const userRoutes = require('./routes/user.routes');
+     const searchRoutes = require('./routes/search.routes');
 
 
      //use routes here
@@ -25,6 +26,7 @@ module.exports.callAndExecuteRequireStack = (app, server) => {
      app.use(CustomerSigninRoutes);
      app.use(recoveryRoutes);
      app.use(userRoutes);
+     app.use(searchRoutes);
 };
 
 module.exports.getEmailAuthCredentials = () => {

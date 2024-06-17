@@ -11,16 +11,18 @@
     <title>(AT-FS): Store</title>
 </head>
 <body>
-    <%- include('templates/user.header.ejs') %>
+    <%- include('templates/users.header.ejs') %>
     
     <main class="store-container">
         <% if (pageUrl === "home") { %>
-            <%- include('layouts/user.home.ejs') %>
+            <%- include('layouts/users.home.ejs') %>
         <% } else if (pageUrl === "profile") { %>
-            <%- include('layouts/user.profile.ejs') %>
-        <% } %>
+            <%- include('layouts/users.profile.ejs') %>
+        <% } else if (pageUrl === "search") { %>
+            <%- include('../search.ejs') %>
+        <% } %>%>
     </main>
 
-    <%- include('templates/user.scripts.ejs') %>
+    <%- include('templates/users.scripts.ejs') %>
 </body>
 </html>

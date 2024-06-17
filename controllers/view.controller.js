@@ -57,9 +57,7 @@ module.exports.renderAdminViews = async (req, res) => {
 
 module.exports.renderUserViews = async (req, res) => {
     const user = req.verifiedUser;
-    console.log("Request user: ", user)
     const { pageUrl } = req.params;
-
 
     if (pageUrl === "store") {
         try {

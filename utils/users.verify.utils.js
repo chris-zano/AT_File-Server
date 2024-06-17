@@ -12,10 +12,6 @@ module.exports.verifyUserbyId = async (req, res, next) => {
             return;
         }
 
-        // Destructure to exclude password, password_salt, and timestamps
-        console.log("Before: ", user);
-        const { _id, password, password_salt, createdAt, updatedAt, ...rest } = user;
-
         // Create the resulting object with id instead of _id
         req.verifiedUser = {
             id: user._id,
@@ -46,10 +42,30 @@ module.exports.verifyAdminbyId = async (req, res, next) => {
             return;
         }
 
-        req.verifiedUser = { id: user._id, username: user.username, profilePicURL: user.profilePicURL, email: user.email, v: user.__v };
+        req.verifiedUser = {
+            id: user._id,
+            username: user.username,
+            profilePicURL: user.profilePicURL,
+            email: user.email,
+            v: user.__v
+        };
+
         next();
     } catch (error) {
         console.error(error);
         return res.status(500).send("Internal Server Error");
+    }
+}
+
+module.exports.verifyUserBySession = (req, res, next) => {
+    console.log("here")
+    const { session } = req.params;
+
+    if (session === "admin") {
+        return module.exports.verifyAdminbyId(req, res, next);
+    } else if (session === "users") {
+        return module.exports.verifyUserbyId(req, res, next);
+    } else {
+        return res.status(500).send('Internal Server Error');
     }
 }
