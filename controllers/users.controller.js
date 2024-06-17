@@ -59,19 +59,23 @@ const getFileObject = async (id) => {
 }
 
 const runUpdates = async (id, sharedId, user_id, responseFromMailer) => {
-    await file.updateOne(
-        { _id: id, "shared._id": sharedId },
-        { $set: { "shared.$.status": "success" } }
-    );
+    try {
+        await file.updateOne(
+            { _id: id, "shared._id": sharedId },
+            { $set: { "shared.$.status": "success" } }
+        );
 
-    await file.updateOne(
-        { _id: id, "shared._id": sharedId },
-        { $push: { "shared.$.recipients": { $each: responseFromMailer.recipients } } }
-    );
+        await file.updateOne(
+            { _id: id, "shared._id": sharedId },
+            { $push: { "shared.$.recipients": { $each: responseFromMailer.recipients } } }
+        );
 
-    await customer.findOneAndUpdate({ _id: user_id }, {
-        $push: { mailed: id }
-    });
+        await customer.findOneAndUpdate({ _id: user_id }, {
+            $push: { mailed: id }
+        });
+    } catch (error) {
+        logError(error, "run updates", "runUpdates");
+    }
 }
 
 const queueRequestForProcessisng = (id, user_id, sharedId, validRecipientEmails, message) => {
@@ -88,30 +92,20 @@ const queueRequestForProcessisng = (id, user_id, sharedId, validRecipientEmails,
                 return;
             }
 
-            try {
-                const responseFromMailer = await mailer.sendFilesViaEmail([fileItem.doc], validRecipientEmails, sender.doc.email, message);
+            const responseFromMailer = await mailer.sendFilesViaEmail([fileItem.doc], validRecipientEmails, sender.doc.email, message);
 
-                if (responseFromMailer.state === "Failed") {
-                    await file.updateOne(
-                        { id: id, "shared._id": sharedId },
-                        { $set: { "shared.$.status": "failed" } }
-                    );
-                    return;
-                }
-
-                await runUpdates(id, sharedId, user_id, responseFromMailer);
-            } catch (mailerError) {
-                console.log(mailerError);
-                logError(mailerError, null, "queueRequestForProcessisng");
+            if (responseFromMailer.state === "Failed") {
                 await file.updateOne(
                     { id: id, "shared._id": sharedId },
                     { $set: { "shared.$.status": "failed" } }
                 );
+                return;
             }
+
+            await runUpdates(id, sharedId, user_id, responseFromMailer);
         } catch (error) {
             console.log(error);
-            logError(error, req.url, "queueRequestForProcessisng");
-
+            logError(error, "/users/share-file", "queueRequestForProcessisng");
             try {
                 await file.updateOne(
                     { id: id, "shared._id": sharedId },
@@ -150,4 +144,48 @@ module.exports.shareFileController = async (req, res) => {
     const sharedId = sharedObj._id;
 
     queueRequestForProcessisng(id, user_id, sharedId, validRecipientEmails, message);
+}
+
+module.exports.addToFavorites = async (req, res) => {
+    const { file_id, user_id } = req.body;
+
+    if (!(isValidObjectId(file_id) && isValidObjectId(user_id))) {
+        return res.status(400).json({ message: "Invalid file or object ids" });
+    }
+
+    try {
+        await customer.updateOne({ _id: user_id }, {
+            $push: { favourites: file_id }
+        });
+
+        return res.status(200).json({ message: "success" });
+
+    } catch (error) {
+        logError(error, req.url, "addToFavorites");
+        return res.status(500).json({ message: "An unexpected error occured" });
+    }
+}
+
+module.exports.addToDownloads = async (req, res) => {
+    const { file_id, user_id } = req.body;
+
+    if (!(isValidObjectId(file_id) && isValidObjectId(user_id))) {
+        return res.status(400).json({ message: "Invalid file or object ids" });
+    }
+
+    try {
+        await file.updateOne({ _id: file_id }, {
+            $push: { downloads: user_id }
+        });
+
+        await customer.updateOne({ _id: user_id }, {
+            $push: { downloads: file_id }
+        });
+
+        return res.status(200).json({ message: "success" });
+
+    } catch (error) {
+        logError(error, req.url, "addToFavorites");
+        return res.status(500).json({ message: "An unexpected error occured" });
+    }
 }

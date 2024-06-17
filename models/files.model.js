@@ -77,21 +77,13 @@ fileSchema.virtual('admin_details', {
     justOne: true
 });
 
-fileSchema.virtual('download_details', {
-    ref: 'Customers',
-    localField: 'downloads',
-    foreignField: '_id'
-});
-
 
 fileSchema.pre('find', function () {
     this.populate('admin_details', '_id username email')
-        .populate('download_details', '_id username email')
 });
 
 fileSchema.pre('findOne', function () {
     this.populate('admin_details', '_id username email')
-        .populate('download_details', '_id username email')
 });
 
 fileSchema.pre('findOneAndUpdate', function (next) {

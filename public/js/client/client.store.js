@@ -1,11 +1,33 @@
 const user_id = JSON.parse(window.sessionStorage.getItem("session-user")) || undefined;
+
 const addToFavorites = async (button) => {
     const file_id = button.getAttribute("data-file_id");
-    const url = new URL(`/users/add-to-favorites/${file_id}/${user_id}`);
 
-    console.log(url)
+    setTimeout(async () => {
+        try {
+            const url = `/users/add-to-favorites`;
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ file_id, user_id })
+            });
+
+            if (response.status === 200) {
+                return Toast_Notification.showInfo("Added to favorites");
+            }
+            else {
+                return Toast_Notification.showError("Failed to add to favorites");
+            }
+        } catch (error) {
+            console.error(error);
+            return Toast_Notification.showError("Failed to add to favorites");
+        }
+    }, 0)
 }
 const downloadFile = (button) => {
+    const file_id = button.getAttribute("data-file_id");
     const file_path = button.getAttribute("data-file_path");
     const originalname = button.getAttribute("data-originalname");
     const filename = button.getAttribute("data-title");
@@ -14,6 +36,29 @@ const downloadFile = (button) => {
     downloadLink.href = file_path;
     downloadLink.download = `${filename.replaceAll(" ", "_")}${originalname.substring(originalname.lastIndexOf("."))}`;
     downloadLink.click();
+
+    setTimeout(async () => {
+        try {
+            const url = `/users/add-to-downloads`;
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ file_id, user_id })
+            });
+
+            if (response.status === 200) {
+                return Toast_Notification.showInfo("Added to favorites");
+            }
+            else {
+                return Toast_Notification.showError("Failed to add to favorites");
+            }
+        } catch (error) {
+            console.error(error);
+            Toast_Notification.showError("Failed to add to favorites");
+        }
+    }, 0)
 }
 const shareFile = (button) => {
     const file_id = button.getAttribute("data-file_id");
@@ -69,11 +114,11 @@ function renderFileShareForm(id) {
                     document.getElementById("share-file_form_container").innerHTML = ""
                     document.getElementById("share-file_form_container").style.visibility = "hidden";
                     console.log(response.json())
-                    
+
                     if (response.status === 202) {
                         console.log("Request accepted for processing (202)");
                         Toast_Notification.showInfo("Email is being queued to be sent");
-                    } 
+                    }
                     else {
                         if (response.status === 400) {
                             const data = response.json();
@@ -81,7 +126,7 @@ function renderFileShareForm(id) {
                             throw new Error(data.message);
                         }
                         else {
-                             console.log(response.json());
+                            console.log(response.json());
                         }
                     }
                 })

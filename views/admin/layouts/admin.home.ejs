@@ -17,25 +17,7 @@
                         </h2>
                         <p>Type: <%= file.type %>
                         </p>
-                        <p>Number of Downloads: <%= file.downloads.length %>
-                        </p>
-                        <button class="expand-btn" onclick="toggleExpand('downloads-<%= file._id %>')">Show
-                            Downloads</button>
-                        <div id='downloads-<%= file._id %>' class="expand-content">
-                            <% if (file.downloads.length===0) { %>
-                                <ul>
-                                    <li>No downloads yet</li>
-                                </ul>
-                                <% } else { %>
-                                    <ul>
-                                        <% for( let download of download_details ) { %>
-                                            <li>
-                                                <%= download.username [ download.email ] %>
-                                            </li>
-                                            <% } %>
-                                    </ul>
-                                    <% } %>
-                        </div>
+                        <p>Number of Downloads: <%= file.downloads.length %></p>
                         <p>Number of Shares: <%= file.shared.length %></p>
                         
                         <div class="file-actions">
