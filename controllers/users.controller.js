@@ -75,42 +75,55 @@ const runUpdates = async (id, sharedId, user_id, responseFromMailer) => {
 }
 
 const queueRequestForProcessisng = (id, user_id, sharedId, validRecipientEmails, message) => {
-    try {
-        setTimeout(async () => {
+    setTimeout(async () => {
+        try {
             const sender = await getCustomerDetails(user_id);
             const fileItem = await getFileObject(id);
 
             if ((fileItem.status === "Fail") || (sender.status === "Fail")) {
-                return await file.updateOne(
-                    {id: id, "shared._id": sharedId},
-                    {$set: {"shared.$.status": "failed"}}
-                )
+                await file.updateOne(
+                    { id: id, "shared._id": sharedId },
+                    { $set: { "shared.$.status": "failed" } }
+                );
+                return;
             }
 
-            const responseFromMailer = await mailer.sendFilesViaEmail([fileItem.doc], validRecipientEmails, sender.doc.email, message);
-            
-            if (responseFromMailer.state === "Failed") {
+            try {
+                const responseFromMailer = await mailer.sendFilesViaEmail([fileItem.doc], validRecipientEmails, sender.doc.email, message);
 
-                return await file.updateOne(
-                    {id: id, "shared._id": sharedId},
-                    {$set: {"shared.$.status": "failed"}}
-                )
+                if (responseFromMailer.state === "Failed") {
+                    await file.updateOne(
+                        { id: id, "shared._id": sharedId },
+                        { $set: { "shared.$.status": "failed" } }
+                    );
+                    return;
+                }
+
+                await runUpdates(id, sharedId, user_id, responseFromMailer);
+            } catch (mailerError) {
+                console.log(mailerError);
+                logError(mailerError, null, "queueRequestForProcessisng");
+                await file.updateOne(
+                    { id: id, "shared._id": sharedId },
+                    { $set: { "shared.$.status": "failed" } }
+                );
             }
+        } catch (error) {
+            console.log(error);
+            logError(error, req.url, "queueRequestForProcessisng");
 
-            await runUpdates(id, sharedId, user_id, responseFromMailer);
-
-        }, 5000);
-
-    } catch (error) {
-        logError(error, req.url, "sendFilesViaEmail");
-
-        return file.updateOne(
-            {id: id, "shared.id": sharedId},
-            {$set: {"shared.$.status": "failed"}}
-        ).then(()=> {return})
-        .catch((er) => console.log(er));
-    }
-}
+            try {
+                await file.updateOne(
+                    { id: id, "shared._id": sharedId },
+                    { $set: { "shared.$.status": "failed" } }
+                );
+            } catch (updateError) {
+                console.log(updateError);
+                logError(updateError, "Error update mailer status", "queueRequestForProcessisng");
+            }
+        }
+    }, 0);
+};
 
 module.exports.shareFileController = async (req, res) => {
     const { id, message, recipients, user_id } = req.body;
