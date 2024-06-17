@@ -65,7 +65,7 @@ const generateVerificationCode = () => {
 
 module.exports.verifyEmail = async (req, res) => {
     const { email } = req.body;
-    if (!email) return res.status(400);
+    if (!email) return res.status(400).json({id: null, message: "Invalid email"});
 
     try {
         const email_exists = await Admin.findOne({ email: email });
@@ -78,12 +78,12 @@ module.exports.verifyEmail = async (req, res) => {
             return await sendVerificationCode(email, verificationCode, tempId);
         } catch (error) {
             logError(new Error(error), req.url, "verifyEmail[async mailer::try-catch]");
-            return;
+            return res.status(500).json({id: null, message: "An unexpected error occured"});
         }
 
     } catch (error) {
         logError(error, "/admins/signup/initiate", "verifyEmail");
-        return res.status(500).json({ error: "Failed to send verification code" });
+        return res.status(500).json({ id: null, message: "Failed to send verification code" });
     }
 }
 
