@@ -35,7 +35,7 @@ module.exports.serveStyleSheets = (req, res) => {
         }
 
         res.type("css");
-        res.set("Cache-Control", "public, max-age=10");
+        // res.set("Cache-Control", "public, max-age=10");
         res.status(200);
         fs.createReadStream(styleSheetFilePath).pipe(res);
     }

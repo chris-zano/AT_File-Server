@@ -4,14 +4,12 @@
 }
 
 :root {
-    --text: #0b0c15;
+    --text: #181925;
     --background: #f4f5fb;
     --primary: #032dfc;
     --secondary: #03980a;
     --accent: #a51901;
     --font-default: "font-default";
-
-
 }
 
 * {
