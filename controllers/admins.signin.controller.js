@@ -21,50 +21,44 @@ const generateVerificationCode = () => {
 
 module.exports.authenticateAdminLogin = async (req, res) => {
     const { username, password } = req.body;
-    console.log({ username, password })
 
     if (!username || !password) {
         logSession("no_user_name", req.ip, "Failed");
-        res.status(400);
-        return;
+        return res.status(400).json({ message: "Username and password are required", user: {} });
     }
 
 
-    let userMatch;
-    if (email_Regex.test(username)) {
-        userMatch = await Admin.findOne({ email: username });
+    try {
+        const userMatch = email_Regex.test(username)
+            ? await Admin.findOne({ email: username })
+            : await Admin.findOne({ username: username });
 
+        if (!userMatch) {
+            logSession(`Incorrect username:://${username}`, req.ip, "Failed");
+            return res.status(404).json({ message: "User not found", user: {} });
+        }
+
+        const passwordIsMatch = await comparePassword(password, userMatch.password);
+        if (!passwordIsMatch) {
+            logSession(`Incorrect Password:://${username}//`, req.ip, "Failed");
+            return res.status(404).json({ message: "Incorrect Password.", user: {} });
+        }
+
+
+        logSession(username, req.ip, "Success");
+        const user = { id: userMatch._id, username: userMatch.username, email: userMatch.email, __v: userMatch.__v }
+        return res.status(200).json({ message: "success", user });
+
+    } catch (error) {
+        logError(error, req.url, "authenticateAdminLogin");
+        return res.status(500).json({ message: "An unexpected error occured", user: {} });
     }
-    else {
-        userMatch = await Admin.findOne({ username: username });
 
-    }
-
-    if (!userMatch) {
-        logSession(username, req.ip, "Failed");
-        res.status(404).json({ message: "User not found" });
-
-        return;
-    }
-
-    const passwordIsMatch = await comparePassword(password, userMatch.password);
-
-    console.log(passwordIsMatch);
-
-    if (!passwordIsMatch) {
-        logSession(username, req.ip, "Failed");
-        res.status(404).json()
-        return;
-    }
-
-    logSession(username, req.ip, "Success");
-    const user = { id: userMatch._id, username: userMatch.username, email: userMatch.email, __v: userMatch.__v }
-    res.status(200).json({ message: "success", user });
 }
 
 module.exports.verifyEmail = async (req, res) => {
     const { email } = req.body;
-    if (!email) return res.status(400).json({id: null, message: "Invalid email"});
+    if (!email) return res.status(400).json({ id: null, message: "Invalid email" });
 
     try {
         const email_exists = await Admin.findOne({ email: email });
@@ -77,7 +71,7 @@ module.exports.verifyEmail = async (req, res) => {
             return await sendVerificationCode(email, verificationCode, tempId);
         } catch (error) {
             logError(new Error(error), req.url, "verifyEmail[async mailer::try-catch]");
-            return res.status(500).json({id: null, message: "An unexpected error occured"});
+            return res.status(500).json({ id: null, message: "An unexpected error occured" });
         }
 
     } catch (error) {
@@ -106,7 +100,6 @@ module.exports.verifyCode = async (req, res) => {
 module.exports.setNewAdminPassword = async (req, res) => {
     const { email, user_password } = req.body;
 
-    console.log({ email, user_password })
     try {
         const hashedPassword = await hashPassword(user_password);
 
@@ -122,6 +115,6 @@ module.exports.setNewAdminPassword = async (req, res) => {
 
     } catch (error) {
         logError(error, "/admins/signup/set-password", "setNewAdminPassword");
-        return res.status(500).json({message: "An unexpected error occured"});
+        return res.status(500).json({ message: "An unexpected error occured" });
     }
 }

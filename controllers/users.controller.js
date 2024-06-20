@@ -222,3 +222,28 @@ module.exports.updateProfilePicture = async (req, res) => {
     }
 
 }
+
+module.exports.updateCustomerDetails = async (req, res) => {
+    const { id, v } = req.params;
+    const { firstname, lastname, username } = req.body;
+
+    if (!isValidObjectId(id) || !v) {
+        return res.status(400).render('error', { code: 400, message: "An error occured while processing your request" });
+    }
+
+    try {
+        await customer.findOneAndUpdate({ _id: id, __v: v }, {
+            $set: {
+                firstName: firstname,
+                lastName: lastname,
+                username: username
+            }
+        });
+
+        return res.status(200).redirect(`/users/views/profile/${id}`);
+
+    } catch (error) {
+        logError(error, req.url, "updateCustomerDetails");
+        return res.status(500).render({ code: 500, message: "Internal Server Error" });
+    }
+}
