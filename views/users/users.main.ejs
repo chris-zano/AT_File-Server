@@ -22,7 +22,9 @@
             <%- include('layouts/users.profile.ejs') %>
         <% } else if (pageUrl === "search") { %>
             <%- include('../search.ejs') %>
-        <% } %>%>
+        <% } else if (pageUrl === "search-result") { %>
+            <%- include('layouts/users.home.ejs') %>
+        <% } %>
     </main>
 
     <%- include('templates/users.scripts.ejs') %>

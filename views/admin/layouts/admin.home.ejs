@@ -1,11 +1,11 @@
 <section class="admin_home_main">
     <div class="container">
-        <% if (fileList.length == 0) { %>
+        <% if (files.length == 0) { %>
          <p>There are no files in the database. Select upload to upload a file</p>
         <% } %>
         
         <div class="file-cards">
-            <% for( let file of fileList) { %>
+            <% for( let file of files) { %>
                 <div class="file-card">
                     <img src=<%=file.type==="Image File" ? `${file.filePathUrl}` : file.type==="PDF Document"
                         ? "/files/system/images/pdf.png" : "/files/system/images/word.png" %>

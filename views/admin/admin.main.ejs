@@ -26,7 +26,9 @@
             <%- include('../search.ejs') %>
         <% } else if (pageUrl === "profile") { %>
             <%- include('layouts/admin.profile.ejs') %>
-        <% } %>%>
+        <% } else if (pageUrl === "search-result") { %>
+            <%- include('layouts/admin.home.ejs') %>
+        <% } %>
     </main>
 
     <%- include('templates/admin.scripts.ejs') %>

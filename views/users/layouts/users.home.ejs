@@ -1,5 +1,9 @@
 <main class="store-container">
-    <h1>Store</h1>
+    <% if (files.length === 0) { %>
+     <div class="files-grid">
+        Nothing to see here
+     </div>
+    <% } %>
     <div class="files-grid">
         <% for (let file of files) { %>
             <div class="file-card">

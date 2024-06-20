@@ -63,7 +63,7 @@ module.exports.verifyUserBySession = (req, res, next) => {
 
     if (session === "admin") {
         return module.exports.verifyAdminbyId(req, res, next);
-    } else if (session === "users") {
+    } else if (session === "user") {
         return module.exports.verifyUserbyId(req, res, next);
     } else {
         return res.status(500).send('Internal Server Error');

@@ -50,7 +50,7 @@ module.exports.renderAdminViews = async (req, res) => {
             pageUrl: req.params.pageUrl,
             scripts_urls: [`/files/scripts/admin/admin.${req.params.pageUrl}.js`],
             stylesheets_urls: ["/files/css/admin/admin.css", `/files/css/admin/${req.params.pageUrl}.css`],
-            fileList: adminDashboardFilesCollection
+            files: adminDashboardFilesCollection
         }
     );
 }

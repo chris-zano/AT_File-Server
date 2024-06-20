@@ -79,8 +79,9 @@ section.results#results {
 
 section.results#results ul {
     scroll-behavior: smooth;
+    margin: auto;
     height: 100%;
-    width: 100%;
+    width: 70%;
     overflow-y: scroll;
     display: block;
 }
@@ -103,8 +104,8 @@ section.results#results ul li a {
 }
 
 section.results#results ul li a div.thumbnail-wrapper {
-    width: 100%;
-    height: 100%;
+    width: 180px;
+    height: 180px;
     padding: 5px;
     border-radius: 1ch;
     contain: content;

@@ -24,6 +24,7 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    max-width: 400px;
 }
 
 .file-card .thumbnail {
