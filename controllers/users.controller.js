@@ -128,23 +128,27 @@ module.exports.shareFileController = async (req, res) => {
     if (validRecipientEmails.length === 0) return res.status(400).json({ message: "Invalid recipient emails" })
 
     res.status(202).json({ message: "Request is been processed", invalidRecipientEmails });
-    const updatedFile = await file.findOneAndUpdate(
-        { _id: id },
-        {
-            $push: {
-                shared: {
-                    from: user_id,
-                    recipients: recipients,
-                    status: "pending"
+    try {
+        const updatedFile = await file.findOneAndUpdate(
+            { _id: id },
+            {
+                $push: {
+                    shared: {
+                        from: user_id,
+                        recipients: recipients,
+                        status: "pending"
+                    }
                 }
-            }
-        },
-        { new: true, useFindAndModify: false }
-    );
-    const sharedObj = updatedFile.shared[updatedFile.shared.length - 1]
-    const sharedId = sharedObj._id;
+            },
+            { new: true, useFindAndModify: false }
+        );
+        const sharedObj = updatedFile.shared[updatedFile.shared.length - 1]
+        const sharedId = sharedObj._id;
 
-    queueRequestForProcessisng(id, user_id, sharedId, validRecipientEmails, message);
+        queueRequestForProcessisng(id, user_id, sharedId, validRecipientEmails, message);
+    } catch (error) {
+        logError(error, req.url, "shareFileController")
+    }
 }
 
 module.exports.addToFavorites = async (req, res) => {
