@@ -26,6 +26,9 @@ const recoveryMain = async () => {
             const data = await response.json();
             if (response.status !== 202) {
                 getId("create-account").classList.remove("hidden");
+                getId("create-account").setAttribute("href", recovery_mode === "admin"
+                    ? "/admin/signin"
+                    : "/signin");
                 return Toast_Notification.showError(data.error);
             }
 
@@ -92,7 +95,7 @@ const recoveryMain = async () => {
             if (response.status !== 200) {
                 return Toast_Notification.showError(data.error);
             }
-            alert("redirecting you to the sign in page");
+            alert("redirecting you to the sign in page ");
             recovery_mode === "admin" ? window.location.replace("/admin/signin") : window.location.replace("/signin")
             //clear session storage  and local storage
             window.sessionStorage.clear();
