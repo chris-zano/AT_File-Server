@@ -1,8 +1,21 @@
+/**
+ * @file users.verify.utils.js
+ * @description Utility functions for verifying users and admins by ID or session.
+ */
 const { Admins, Customers } = require('./db.exports.utils');
 
 const Admin = Admins();
 const Customer = Customers();
 
+/**
+ * Middleware to verify a user by ID.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @param {Function} next - Express next middleware function.
+ * @returns {void}
+ * @throws {Error} 409 - If user is not found, redirects to "/signin".
+ * @throws {Error} 500 - Internal server error.
+ */
 module.exports.verifyUserbyId = async (req, res, next) => {
     try {
         const user = await Customer.findOne({ _id: req.params.id });
@@ -33,6 +46,15 @@ module.exports.verifyUserbyId = async (req, res, next) => {
     }
 };
 
+/**
+ * Middleware to verify an admin by ID.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @param {Function} next - Express next middleware function.
+ * @returns {void}
+ * @throws {Error} 409 - If admin is not found, redirects to "/signin".
+ * @throws {Error} 500 - Internal server error.
+ */
 module.exports.verifyAdminbyId = async (req, res, next) => {
     try {
         const user = await Admin.findOne({ _id: req.params.id });
@@ -57,6 +79,14 @@ module.exports.verifyAdminbyId = async (req, res, next) => {
     }
 }
 
+/**
+ * Middleware to verify user or admin by session.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @param {Function} next - Express next middleware function.
+ * @returns {void}
+ * @throws {Error} 500 - Internal server error if session type is neither "admin" nor "user".
+ */
 module.exports.verifyUserBySession = (req, res, next) => {
     console.log("here")
     const { session } = req.params;

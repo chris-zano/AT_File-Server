@@ -1,8 +1,19 @@
+/**
+ * @file socket.utils.js
+ * @description Utility functions for setting up and handling Socket.IO server events.
+ */
+
 const socketIo = require('socket.io');
 
 const { Files } = require('./db.exports.utils');
 const file = Files();
 
+/**
+ * Runs a database query based on the provided search criteria.
+ * @param {string} queryString - The string to search for in the database.
+ * @param {string} [type=""] - The type of file to filter the search by.
+ * @returns {Promise<Array>} - A promise that resolves to an array of query results.
+ */
 const runQuery = async (queryString, type = "") => {
     const regex = new RegExp(queryString, "i");
 
@@ -37,39 +48,11 @@ const runQuery = async (queryString, type = "") => {
     }
 }
 
-const queryAll = async (queryString) => {
-    try {
-        return await runQuery(queryString);
-    } catch (error) {
-        console.log("It came from here:", error);
-        return []
-    }
-}
-const queryImages = async (queryString) => {
-    try {
-        return await runQuery(queryString, 'Image File');
-    } catch (error) {
-        console.log("It came from here:", error);
-        return []
-    }
-}
-const queryPdf = async (queryString) => {
-    try {
-        return await runQuery(queryString, 'PDF document');
-    } catch (error) {
-        console.log("It came from here:", error);
-        return []
-    }
-}
-const queryDoc = async (queryString) => {
-    try {
-        return await runQuery(queryString, 'Word Document');
-    } catch (error) {
-        console.log("It came from here:", error);
-        return []
-    }
-}
-
+/**
+ * Handles search input from the client and executes corresponding database queries.
+ * @param {Object} input - The search input object containing category and searchInput.
+ * @returns {Promise<Object>} - A promise that resolves to an object containing search results.
+ */
 const handleSearchInputFromClient = async (input) => {
     if (!input || Object.keys(input).length !== 2) return { data: [] };
     const { category, searchInput } = input;
@@ -87,6 +70,11 @@ const handleSearchInputFromClient = async (input) => {
     return { data: await queryMethod() };
 }
 
+/**
+ * Sets up a WebSocket server using Socket.IO on the provided HTTP server instance.
+ * @param {Object} server - The HTTP server instance to attach Socket.IO to.
+ * @returns {Object} - The Socket.IO server instance.
+ */
 const setupWebSocketServer = (server) => {
     const io = socketIo(server);
 

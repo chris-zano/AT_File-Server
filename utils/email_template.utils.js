@@ -1,3 +1,14 @@
+/**
+ * @file emailTemplates.js
+ * @description This module contains functions to create email templates for various purposes such as verification codes, password resets, and file sharing.
+ */
+
+
+/**
+ * Creates an email template for a verification code.
+ * @param {string} verificationCode - The verification code to be included in the email.
+ * @returns {string} The HTML email template as a string.
+ */
 function createEmailTemplateForVerificationCode(verificationCode) {
     const emailTemplate = `
         <!DOCTYPE html>
@@ -56,6 +67,15 @@ function createEmailTemplateForVerificationCode(verificationCode) {
     return emailTemplate;
 }
 
+
+/**
+ * Creates an email template for a password reset attempt.
+ * @param {string} recipient_email - The email of the recipient.
+ * @param {string} username - The username of the recipient.
+ * @param {string} userId - The user ID of the recipient.
+ * @param {boolean} admin - Indicates if the recipient is an admin.
+ * @returns {string} The HTML email template as a string.
+ */
 function createEmailTemplateForPasswordResetAttempt(recipient_email, username, userId, admin) {
     const emailTemplate = `
     <!DOCTYPE html>
@@ -140,6 +160,11 @@ function createEmailTemplateForPasswordResetAttempt(recipient_email, username, u
     return emailTemplate
 }
 
+
+/**
+ * Creates an email template for password reset confirmation.
+ * @returns {string} The HTML email template as a string.
+ */
 function createEmailTemplateForPasswordResetConfirmation () {
     const emailTemplate = `
         <!DOCTYPE html>
@@ -224,6 +249,12 @@ function createEmailTemplateForPasswordResetConfirmation () {
     return emailTemplate
 }
 
+/**
+ * Creates an email template for file sharing.
+ * @param {string} username - The username of the sender.
+ * @param {string} message - The custom message to be included in the email.
+ * @returns {string} The HTML email template as a string.
+ */
 function createEmailTemplateForFileSharing(username, message) {
     const emailTemplate = `
     <!DOCTYPE html>

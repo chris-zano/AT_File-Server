@@ -1,6 +1,16 @@
+/**
+ * @file requireStack.js
+ * @description This module sets up the web socket server and includes all route configurations.
+ */
+
 const setupWebSocketServer = require('./utils/socket.utils');
 require('dotenv').config();
 
+/**
+ * Sets up and executes all required routes and utilities for the application.
+ * @param {object} app - The Express application instance.
+ * @param {object} server - The HTTP server instance.
+ */
 module.exports.callAndExecuteRequireStack = (app, server) => {
      const io = setupWebSocketServer(server);
      //require routes here
@@ -29,6 +39,10 @@ module.exports.callAndExecuteRequireStack = (app, server) => {
      app.use(searchRoutes);
 };
 
+/**
+ * Retrieves email authentication credentials from environment variables.
+ * @returns {object} The email authentication credentials.
+ */
 module.exports.getEmailAuthCredentials = () => {
      const EMAIL_AUTH = {
           user: process.env.SYSTEM_EMAIL,

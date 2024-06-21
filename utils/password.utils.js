@@ -1,22 +1,40 @@
+/**
+ * @file password.utils.js
+ * @description This module provides utility functions for hashing and comparing passwords using bcrypt.
+ */
+
 const bcrypt = require('bcrypt');
 
+/**
+ * Hashes a given password using bcrypt.
+ * @param {string} password - The password to hash.
+ * @returns {Promise<Object>} A promise that resolves to an object containing the salt, hashed password, and any error that occurred.
+ */
 const hashPassword = async (password) => {
-    console.log("password to be hashed = ",password)
     try {
         const salt = await bcrypt.genSalt(10);
-        console.log("salt to be used = ",salt)
         const hashedPassword = await bcrypt.hash(password, salt);
-        console.log("Hased result = ", { salt, hashedPassword, error: null })
         return { salt, hashedPassword, error: null };
-    }catch(error) {
+    } catch (error) {
         console.log(error);
-        return {salt: null, hashedPassword: null, error: error}
+        return { salt: null, hashedPassword: null, error: error }
     }
 }
 
+/**
+ * Compares a given password with a hashed password using bcrypt.
+ * @param {string} password - The plain text password to compare.
+ * @param {string} hashedPassword - The hashed password to compare against.
+ * @returns {Promise<boolean>} A promise that resolves to a boolean indicating whether the passwords match.
+ */
 const comparePassword = async (password, hashedPassword) => {
-    const isMatch = await bcrypt.compare(password, hashedPassword);
-    return isMatch;
+    try {
+        const isMatch = await bcrypt.compare(password, hashedPassword);
+        return isMatch;
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
 }
 
 

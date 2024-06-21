@@ -1,3 +1,8 @@
+/**
+ * @file email.utils.js
+ * @description This module provides utility functions for sending emails related to user verification, password resets, and file sharing.
+ */
+
 const path = require('path')
 const { createEmailTemplateForVerificationCode, createEmailTemplateForPasswordResetAttempt, createEmailTemplateForPasswordResetConfirmation, createEmailTemplateForFileSharing } = require("./email_template.utils");
 const { logError } = require("./logs.utils");
@@ -8,12 +13,25 @@ const Code = codesModel;
 
 const EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
+/**
+ * Returns the regular expression used to validate email addresses.
+ * @returns {RegExp} The regular expression for email validation.
+ */
 module.exports.emailRegexp = () => {
     return EMAIL_REGEXP;
 }
 
 const system_email = "no-reply.atfs@hotmail.com";
 
+/**
+ * Sends an email using a child process.
+ * @param {Object} options - The email options.
+ * @param {string} options.from - The email sender.
+ * @param {string|string[]} options.to - The email recipient(s).
+ * @param {string} options.subject - The email subject.
+ * @param {string} options.html - The email HTML content.
+ * @returns {Promise<Object>} A promise that resolves to the email response.
+ */
 const transportMail = async (options) => {
     // const response = await transporter.sendMail(options); //old code
     // return response;
@@ -45,6 +63,13 @@ const transportMail = async (options) => {
     })
 }
 
+/**
+ * Sends a verification code to the specified email address.
+ * @param {string} recipient_email - The recipient's email address.
+ * @param {string} verificationCode - The verification code to send.
+ * @param {string} tempId - The temporary ID associated with the verification code.
+ * @returns {Promise<Object>} The status and result of the email operation.
+ */
 module.exports.sendVerificationCode = async (recipient_email, verificationCode, tempId) => {
 
     if (!(EMAIL_REGEXP.test(recipient_email))) {
@@ -115,6 +140,14 @@ module.exports.sendVerificationCode = async (recipient_email, verificationCode, 
     }
 }
 
+/**
+ * Alerts a user of a password reset attempt.
+ * @param {string} recipient_email - The recipient's email address.
+ * @param {string} username - The username of the account.
+ * @param {string} userId - The user ID of the account.
+ * @param {boolean} admin - Indicates if the reset attempt was by an admin.
+ * @returns {Promise<Object|null>} The email response or null if an error occurred.
+ */
 module.exports.alertUserOfPasswordResetAttempt = async (recipient_email, username, userId, admin) => {
     if (!(EMAIL_REGEXP.test(recipient_email))) {
         return {
@@ -143,6 +176,11 @@ module.exports.alertUserOfPasswordResetAttempt = async (recipient_email, usernam
     }
 }
 
+/**
+ * Informs a user of a successful password reset.
+ * @param {string} recipient_email - The recipient's email address.
+ * @returns {Promise<Object|null>} The email response or null if an error occurred.
+ */
 module.exports.informUserOfSuccessfulPasswordReset = async (recipient_email) => {
     if (!(EMAIL_REGEXP.test(recipient_email))) {
         return {
@@ -171,6 +209,14 @@ module.exports.informUserOfSuccessfulPasswordReset = async (recipient_email) => 
     }
 }
 
+/**
+ * Validates if the provided file object has the required structure and values.
+ * @param {Object} fileObject - The file object to validate.
+ * @param {string} fileObject.filename - The name of the file.
+ * @param {string} fileObject.path - The path to the file.
+ * @param {string} fileObject.size - The size of the file.
+ * @returns {boolean} True if the file object is valid, false otherwise.
+ */
 const isFileObjectValid = (fileObject = { filename: "", path: "", size: "" }) => {
     const expectedkeys = ["filename", "path", "size"];
     const objectkeys = Object.keys(fileObject);
@@ -192,6 +238,14 @@ const isFileObjectValid = (fileObject = { filename: "", path: "", size: "" }) =>
 
 }
 
+/**
+ * Sends files via email to the specified recipients.
+ * @param {Object[]} fileObjects - The array of file objects to send.
+ * @param {string[]} recipients - The email addresses of the recipients.
+ * @param {string} [username="ATFS_user"] - The username of the sender.
+ * @param {string} [message=""] - The message to include in the email.
+ * @returns {Promise<Object>} The status and result of the email operation.
+ */
 module.exports.sendFilesViaEmail = async (fileObjects = [], recipients = [], username = "ATFS_user", message = "") => {
     if (!Array.isArray(fileObjects) || !Array.isArray(recipients) || fileObjects.length === 0 || recipients.length === 0) {
         return {
