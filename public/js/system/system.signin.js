@@ -151,8 +151,8 @@ const renderVerificationForm = (codeId) => {
                                         try {
                                             const res = await signupWithEmailAndPassword(email, user_input);
                                             if (res.message === "Success") {
-                                                window.sessionStorage.setItem("admin_data", JSON.stringify(res.user));
-                                                window.sessionStorage.setItem("session-admin", JSON.stringify(res.user.id));
+                                                window.sessionStorage.setItem("user_data", JSON.stringify(res.user));
+                                                window.sessionStorage.setItem("session-user", JSON.stringify(res.user.id));
                                                 return window.location.replace(`/users/views/store/${res.user.id}`);
                                             }
                                             else {

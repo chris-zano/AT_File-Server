@@ -37,6 +37,8 @@ const downloadFile = (button) => {
     downloadLink.download = `${filename.replaceAll(" ", "_")}${originalname.substring(originalname.lastIndexOf("."))}`;
     downloadLink.click();
 
+    console.log(downloadLink)
+
     setTimeout(async () => {
         try {
             const url = `/users/add-to-downloads`;

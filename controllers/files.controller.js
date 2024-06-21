@@ -227,3 +227,69 @@ module.exports.serveStoreImages = (req, res) => {
         return res.status(500);
     }
 }
+
+/**
+ * Middleware to serve PDF files.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {void}
+ * @throws {Error} 404 - If PDF file is not found.
+ * @throws {Error} 500 - Internal server error.
+ */
+module.exports.serveStorePDF = (req, res) => {
+    try {
+        const { filename } = req.params;
+        if (filename) {
+            const filePath = path.join(__dirname, "..", "AT-FS", "pdfs", "store_pdfs", filename);
+
+            if (!(fs.existsSync(filePath))) {
+                res.type("png");
+                res.status(404);
+                return fs.createReadStream(DEFAULT_PROFILE_IMAGE).pipe(res);
+            }
+
+            res.set('Cache-Control', 'public, max-age=30');
+            res.type('application/pdf');
+            res.status(200);
+            return fs.createReadStream(filePath).pipe(res);
+        } else {
+            return res.status(404).end();
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).end();
+    }
+};
+
+/**
+ * Middleware to serve Word document files.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {void}
+ * @throws {Error} 404 - If Word document file is not found.
+ * @throws {Error} 500 - Internal server error.
+ */
+module.exports.serveStoreWordDoc = (req, res) => {
+    try {
+        const { filename } = req.params;
+        if (filename) {
+            const filePath = path.join(__dirname, "..", "AT-FS", "docs", "store_docs", filename);
+
+            if (!(fs.existsSync(filePath))) {
+                res.type("png");
+                res.status(404);
+                return fs.createReadStream(DEFAULT_PROFILE_IMAGE).pipe(res);
+            }
+
+            res.set('Cache-Control', 'public, max-age=30');
+            res.type('application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+            res.status(200);
+            return fs.createReadStream(filePath).pipe(res);
+        } else {
+            return res.status(404).end();
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).end();
+    }
+};
