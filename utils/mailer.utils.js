@@ -38,7 +38,7 @@ const transportMail = async (options) => {
     return new Promise((resolve, reject) => {
         const child = fork(path.join(__dirname, 'process.mailer.utils.js'))
         console.log("A new child process has been forked with pid of: ", child.pid);
-        console.log(options);
+        // console.log(options);
 
         child.send(options);
 

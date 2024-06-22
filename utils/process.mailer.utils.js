@@ -13,6 +13,7 @@ const EMAIL_AUTH = getEmailAuthCredentials();
  * @param {Object} options - The mail options object containing email details.
  */
 process.on('message', async (options) => {
+    console.log(EMAIL_AUTH)
     try {
         const transporter = nodemailer.createTransport({
             service: "hotmail",
