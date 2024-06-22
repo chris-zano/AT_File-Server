@@ -1,6 +1,7 @@
 const adminsignIn = async (username = "", password = "") => {
     const request_options = { username, password };
     const postSigninURL = '/admin/login';
+    const response = await initiatePostRequest(postSigninURL, request_options);
     try {
         if (response.status !== 200) {
             Toast_Notification.showError("Invalid username or password");
