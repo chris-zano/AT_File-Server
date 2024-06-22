@@ -8,6 +8,14 @@ const { alertUserOfPasswordResetAttempt, informUserOfSuccessfulPasswordReset, em
 const { hashPassword, comparePassword } = require('../utils/password.utils');
 const router = express.Router();
 
+/**
+ * Handle verification of user permissions and ID.
+ *
+ * @function verifyUser
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} JSON response indicating the status of user verification.
+ */
 router.get("/system/verify-user/:permissions/:id", async (req, res) => {
     const { permissions, id } = req.params;
 
@@ -21,16 +29,16 @@ router.get("/system/verify-user/:permissions/:id", async (req, res) => {
             const isAdmin = await adminsModel.findOne({ _id: id });
             if (isAdmin) {
                 res.set("Cache-Control", "public, max-age=3600");
-                res.status(200).json({ message: "valid admin" });
+                return res.status(200).json({ message: "valid admin" });
             }
             else {
                 res.set("Cache-Control", "public, max-age=3600");
-                res.status(404).json({ message: "user not found" });
+                return res.status(404).json({ message: "user not found" });
             }
         }
         catch (error) {
             logError(error, `/system/verify-user/${req.params.permissions}/${req.params.id}`, `router.get(req, res)`);
-            res.render("error", { code: "500", message: "The system failed to verify your credentials" });
+            return res.render("error", { code: "500", message: "The system failed to verify your credentials" });
         }
     }
 
@@ -39,38 +47,70 @@ router.get("/system/verify-user/:permissions/:id", async (req, res) => {
 
         if (isCustomer) {
             res.set("Cache-Control", "public, max-age=3600");
-            res.status(200).json({ message: "valid customer" });
+            return res.status(200).json({ message: "valid customer" });
         }
 
         else {
             res.set("Cache-Control", "public, max-age=3600");
-            res.status(404).json({ message: "user not found" });
+            return res.status(404).json({ message: "user not found" });
         }
-
-        return;
     }
 
     else {
-        res.status(500).json("Internal Server Error");
+        return res.status(500).json("Internal Server Error");
     }
 });
 
+/**
+ * Verify an admin by ID and email.
+ *
+ * @async
+ * @function verifyAdminByIdAndEmail
+ * @param {string} uid - The ID of the admin to verify.
+ * @param {string} uemail - The email of the admin to verify.
+ * @throws {Error} Throws an error if admin is not found.
+ * @returns {Promise<Object>} Returns an object with the verified admin document.
+ */
 const verifyAdminByIdAndEmail = async (uid, uemail) => {
-    const matchedDocument = await adminsModel.findOne({ _id: uid, email: uemail });
+    try {
+        const matchedDocument = await adminsModel.findOne({ _id: uid, email: uemail });
+        if (!matchedDocument) return null;
+        return { verified_user: matchedDocument };
+    } catch (error) {
+        logError(error, "verifyAdminByIdAndEmail", "verifyAdminByIdAndEmail");
+        return null
+    }
 
-    if (!matchedDocument) throw new Error("Admin not found");
-
-    return { verified_user: matchedDocument };
 }
 
+/**
+ * Verify a customer by ID and email.
+ *
+ * @async
+ * @function verifyCustomerByIdAndEmail
+ * @param {string} uid - The ID of the customer to verify.
+ * @param {string} uemail - The email of the customer to verify.
+ * @returns {Promise<Object|boolean>} Returns an object with the verified customer document if found, otherwise returns false.
+ */
 const verifyCustomerByIdAndEmail = async (uid, uemail) => {
-    const matchedDocument = await customersModel.findOne({ _id: uid, email: uemail });
-
-    if (!matchedDocument) return false;
-
-    return { verified_user: matchedDocument };
+    try {
+        const matchedDocument = await customersModel.findOne({ _id: uid, email: uemail });
+        if (!matchedDocument) return null;
+        return { verified_user: matchedDocument };
+    } catch (error) {
+        logError(error, "verifyCustomerByIdAndEmail", "verifyCustomerByIdAndEmail");
+        return null
+    }
 }
 
+/**
+ * authenticaion routes
+ *
+ * @function verifyUser
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} JSON response indicating the status of user authentication.
+ */
 router.get('/sessions/:user_permission/password-reset', async (req, res) => {
     const { user_permission } = req.params;
     const { uid, uemail } = req.query;
@@ -85,21 +125,25 @@ router.get('/sessions/:user_permission/password-reset', async (req, res) => {
     try {
         const doc = await userPermissionMatch(uid, uemail);
 
-        if (doc && Object.keys(doc).length !== 0) {
-            res.status(200).json({ message: "A password reset link has been sent to your email." });
-
-            return await alertUserOfPasswordResetAttempt(doc.verified_user.email, doc.verified_user.username, doc.verified_user._id, user_permission === "admin" ? "system-undefined" : "system-not-null");
-        }
-    } catch (error) {
-        //for debugging 
-        console.error("Error on line 101: ", error);
+        if (!doc) return res.status(403).render("error", { code: 403, message: `Operation requires authentication` });
         
+        res.status(200).json({ message: "A password reset link has been sent to your email." });
+
+        return await alertUserOfPasswordResetAttempt(doc.verified_user.email, doc.verified_user.username, doc.verified_user._id, user_permission === "admin" ? "system-undefined" : "system-not-null");
+    } catch (error) {
         logError(error, req.path(), `GET ${req.path()}`);
-        res.render("error", { code: 500, message: `An Unexpected error occured` })
+        return res.render("error", { code: 500, message: `An Unexpected error occured` })
     }
 });
 
-
+/**
+ * password reset route and handler.
+ *
+ * @function verifyUser
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} JSON response indicating the status of user password reset.
+ */
 router.get('/sessions/reset-user-password/:user/:id', async (req, res) => {
     const { user, id } = req.params;
     const GetUserTypes = { "system-undefined": adminsModel, "system-not-null": customersModel };
@@ -126,6 +170,14 @@ router.get('/sessions/reset-user-password/:user/:id', async (req, res) => {
     });
 });
 
+/**
+ * password reset with email verification.
+ *
+ * @function verifyUser
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} JSON response indicating the status of password reset.
+ */
 router.post("/session/password-reset/", async (req, res) => {
     const { user_type, email, userId, password } = req.body;
     const passwordRegexp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[#!._@-])[A-Za-z0-9#!._@-]{8,}$/;
