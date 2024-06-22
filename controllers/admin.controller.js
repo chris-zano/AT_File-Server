@@ -1,3 +1,7 @@
+/**
+ * @module ProfileController
+ */
+
 const { Admins, Files } = require("../utils/db.exports.utils");
 const { logError } = require("../utils/logs.utils");
 const Admin = Admins();
@@ -6,6 +10,21 @@ const File_ = Files()
 const fs = require("fs");
 const path = require("path");
 
+/**
+ * Updates the profile picture of an admin.
+ * 
+ * @async
+ * @function updateProfilePicture
+ * @param {Object} req - The request object.
+ * @param {Object} req.verifiedUser - Verified user information.
+ * @param {string} req.verifiedUser.id - The ID of the verified user.
+ * @param {Object} req.file - The uploaded file information.
+ * @param {string} req.file.filename - The new filename of the profile picture.
+ * @param {Object} req.params - The request parameters.
+ * @param {string} req.params.old_filename - The old filename of the profile picture.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>}
+ */
 module.exports.updateProfilePicture = async (req, res) => {
     const { id } = req.verifiedUser;
     const { filename } = req.file;
@@ -38,6 +57,20 @@ module.exports.updateProfilePicture = async (req, res) => {
 
 }
 
+/**
+ * Updates the username of an admin.
+ * 
+ * @async
+ * @function updateAdminUsername
+ * @param {Object} req - The request object.
+ * @param {Object} req.verifiedUser - Verified user information.
+ * @param {string} req.verifiedUser.id - The ID of the verified user.
+ * @param {number} req.verifiedUser.v - The version number of the verified user.
+ * @param {Object} req.body - The request body.
+ * @param {string} req.body.username - The new username.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>}
+ */
 module.exports.updateAdminUsername = async (req, res) => {
     const { id, v } = req.verifiedUser;
     const { username } = req.body;
@@ -61,6 +94,27 @@ module.exports.updateAdminUsername = async (req, res) => {
     return res.status(200).redirect(`/admin/views/profile/${id}`);
 }
 
+/**
+ * Uploads and stores a file.
+ * 
+ * @async
+ * @function uploadStoreFile
+ * @param {Object} req - The request object.
+ * @param {Object} req.file - The uploaded file information.
+ * @param {string} req.file.filename - The filename of the uploaded file.
+ * @param {string} req.file.originalname - The original name of the uploaded file.
+ * @param {string} req.file.mimetype - The MIME type of the uploaded file.
+ * @param {string} req.file.encoding - The encoding of the uploaded file.
+ * @param {number} req.file.size - The size of the uploaded file.
+ * @param {Object} req.body - The request body.
+ * @param {string} req.body.title - The title of the file.
+ * @param {string} req.body.description - The description of the file.
+ * @param {string} req.body.visibility - The visibility status of the file.
+ * @param {Object} req.params - The request parameters.
+ * @param {string} req.params.fileType - The type of the file.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>}
+ */
 module.exports.uploadStoreFile = async (req, res) => {
     const { filename, originalname, mimetype, encoding, size } = req.file,
         { title, description, visibility } = req.body,
@@ -86,6 +140,21 @@ module.exports.uploadStoreFile = async (req, res) => {
     }
 }
 
+/**
+ * Updates the contents of an existing file.
+ * 
+ * @async
+ * @function updateFileContents
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The request parameters.
+ * @param {string} req.params.file_id - The ID of the file to update.
+ * @param {Object} req.body - The request body.
+ * @param {string} req.body.title - The new title of the file.
+ * @param {string} req.body.description - The new description of the file.
+ * @param {string} req.body.visibility - The new visibility status of the file.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>}
+ */
 module.exports.updateFileContents = async (req, res) => {
     const { file_id } = req.params;
     const { title, description, visibility } = req.body;
@@ -108,6 +177,17 @@ module.exports.updateFileContents = async (req, res) => {
     return res.status(200).redirect(`/admin/views/dashboard/${req.verifiedUser.id}`)
 }
 
+/**
+ * Deletes a file by its ID.
+ * 
+ * @async
+ * @function deleteOneFile
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The request parameters.
+ * @param {string} req.params.file_id - The ID of the file to delete.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>}
+ */
 module.exports.deleteOneFile = async (req, res) => {
     const { file_id } = req.params;
 
