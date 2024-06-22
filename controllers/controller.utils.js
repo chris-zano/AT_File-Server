@@ -2,6 +2,8 @@
  * @module controllerUtilities
  */
 
+const mongoose = require('mongoose');
+
 const randomstring = require("randomstring");
 const crypto = require('crypto');
 
@@ -40,8 +42,21 @@ const matchBaseStringToSubstring = (baseString = "", subString = "") => {
     return baseString.includes(subString);
 }
 
+
+/**
+ * Checks if a given string is a valid MongoDB ObjectId.
+ *
+ * @function isValidObjectId
+ * @param {string} id - The ID to check.
+ * @returns {boolean} Returns true if the ID is a valid ObjectId; false otherwise.
+ */
+const isValidObjectId = (id) => {
+    return mongoose.Types.ObjectId.isValid(id);
+};
+
 module.exports = {
     generateTempId,
     generateVerificationCode,
-    matchBaseStringToSubstring
+    matchBaseStringToSubstring,
+    isValidObjectId
 }

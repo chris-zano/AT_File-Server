@@ -1,19 +1,27 @@
+/**
+ * @module userController
+ */
+const fs = require("fs");
+const path = require('path');
+
 const { Customers, Files } = require('../utils/db.exports.utils');
 const { logError } = require('../utils/logs.utils');
+const { isValidObjectId } = require('./controller.utils');
+
 const mailer = require('../utils/mailer.utils');
 const emailregexp = mailer.emailRegexp();
-const mongoose = require('mongoose');
-const path = require('path');
-const fs = require("fs");
+
 const file = Files();
 const customer = Customers();
 
-
-// check if an id is a valid MongoDB ObjectId
-const isValidObjectId = (id) => {
-    return mongoose.Types.ObjectId.isValid(id);
-};
-
+/**
+ * Retrieves customer details based on the provided ID.
+ *
+ * @async
+ * @function getCustomerDetails
+ * @param {string} id - The customer ID.
+ * @returns {Promise<{ status: string, message: string, doc: Object }>} Status, message, and customer details object.
+ */
 const getCustomerDetails = async (id) => {
     if (typeof id !== "string" || !isValidObjectId(id)) return { status: "Fail", message: `Invalid Object Id ${id}`, doc: {} };
     try {
@@ -30,8 +38,21 @@ const getCustomerDetails = async (id) => {
     }
 }
 
+/**
+ * Valid types for files.
+ *
+ * @constant {Array.<string>} validTypes
+ */
 const validTypes = ["images", "docs", "pdfs"];
 
+/**
+ * Constructs the file path based on filename and type.
+ *
+ * @function getFilepath
+ * @param {string} filename - The name of the file.
+ * @param {string} type - The type of the file ("images", "docs", "pdfs").
+ * @returns {string} The constructed file path.
+ */
 const getFilepath = (filename = '', type = '') => {
 
     if (typeof filename !== "string" || filename.length === 0) return "Invalid Filename";
@@ -40,7 +61,14 @@ const getFilepath = (filename = '', type = '') => {
     return path.join(__dirname, "..", "AT-FS", `${type.toLowerCase()}`, `store_${type}`, filename);
 }
 
-
+/**
+ * Retrieves file details based on the provided ID.
+ *
+ * @async
+ * @function getFileObject
+ * @param {string} id - The file ID.
+ * @returns {Promise<{ status: string, message: string, doc: Object }>} Status, message, and file details object.
+ */
 const getFileObject = async (id) => {
     if (typeof id !== "string" || !isValidObjectId(id)) return { status: "Fail", message: `Invalid Object Id ${id}`, doc: {} };
     const matchTypes = { "Image File": 'images', "PDF document": 'pdfs', "Word Document": 'docs' };
@@ -59,6 +87,17 @@ const getFileObject = async (id) => {
     }
 }
 
+/**
+ * Updates file and customer records after sharing a file via email.
+ *
+ * @async
+ * @function runUpdates
+ * @param {string} id - The file ID.
+ * @param {string} sharedId - The ID of the sharing entry.
+ * @param {string} user_id - The ID of the user sharing the file.
+ * @param {Object} responseFromMailer - The response object from the mailer utility.
+ * @returns {Promise<void>}
+ */
 const runUpdates = async (id, sharedId, user_id, responseFromMailer) => {
     try {
         await file.updateOne(
@@ -79,6 +118,17 @@ const runUpdates = async (id, sharedId, user_id, responseFromMailer) => {
     }
 }
 
+/**
+ * Queues the file sharing request for processing.
+ *
+ * @function queueRequestForProcessisng
+ * @param {string} id - The file ID.
+ * @param {string} user_id - The ID of the user sharing the file.
+ * @param {string} sharedId - The ID of the sharing entry.
+ * @param {Array.<string>} validRecipientEmails - Array of valid recipient emails.
+ * @param {string} message - The message to send with the email.
+ * @returns {void}
+ */
 const queueRequestForProcessisng = (id, user_id, sharedId, validRecipientEmails, message) => {
     setTimeout(async () => {
         try {
@@ -120,6 +170,19 @@ const queueRequestForProcessisng = (id, user_id, sharedId, validRecipientEmails,
     }, 0);
 };
 
+/**
+ * Controller function to handle sharing a file via email.
+ *
+ * @async
+ * @function shareFileController
+ * @param {Object} req - The request object.
+ * @param {string} req.body.id - The ID of the file to share.
+ * @param {string} req.body.message - The message to include in the email.
+ * @param {Array.<string>} req.body.recipients - Array of recipient emails.
+ * @param {string} req.body.user_id - The ID of the user sharing the file.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>}
+ */
 module.exports.shareFileController = async (req, res) => {
     const { id, message, recipients, user_id } = req.body;
     const validRecipientEmails = Array.isArray(recipients) ? recipients.filter((recipient) => (emailregexp.test(recipient))) : [];
@@ -151,6 +214,18 @@ module.exports.shareFileController = async (req, res) => {
     }
 }
 
+/**
+ * Adds a file to the user's favorites list.
+ *
+ * @async
+ * @function addToFavorites
+ * @param {Object} req - The request object.
+ * @param {string} req.body.file_id - The ID of the file to add to favorites.
+ * @param {string} req.body.user_id - The ID of the user whose favorites list is updated.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Object>} JSON response indicating success or failure.
+ * @throws {Object} Returns a JSON object with an error message if an unexpected error occurs.
+ */
 module.exports.addToFavorites = async (req, res) => {
     const { file_id, user_id } = req.body;
 
@@ -171,6 +246,18 @@ module.exports.addToFavorites = async (req, res) => {
     }
 }
 
+/**
+ * Adds a file to the user's downloads and updates the file's download count.
+ *
+ * @async
+ * @function addToDownloads
+ * @param {Object} req - The request object.
+ * @param {string} req.body.file_id - The ID of the file to add to downloads.
+ * @param {string} req.body.user_id - The ID of the user who downloaded the file.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Object>} JSON response indicating success or failure.
+ * @throws {Object} Returns a JSON object with an error message if an unexpected error occurs.
+ */
 module.exports.addToDownloads = async (req, res) => {
     const { file_id, user_id } = req.body;
 
@@ -195,6 +282,20 @@ module.exports.addToDownloads = async (req, res) => {
     }
 }
 
+/**
+ * Updates the user's profile picture URL in the database.
+ *
+ * @async
+ * @function updateProfilePicture
+ * @param {Object} req - The request object.
+ * @param {Object} req.verifiedUser - The verified user object containing user details.
+ * @param {Object} req.file - The file object containing the uploaded profile picture.
+ * @param {string} req.file.filename - The filename of the uploaded profile picture.
+ * @param {string} req.params.old_filename - The old filename of the current profile picture.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Object>} Redirects to the user's profile view on success or failure.
+ * @throws {Object} Returns a JSON object with an error message if an unexpected error occurs.
+ */
 module.exports.updateProfilePicture = async (req, res) => {
     const { id } = req.verifiedUser;
     const { filename } = req.file;
@@ -227,6 +328,23 @@ module.exports.updateProfilePicture = async (req, res) => {
 
 }
 
+/**
+ * Updates the details of a customer in the database.
+ *
+ * @async
+ * @function updateCustomerDetails
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The URL parameters object.
+ * @param {string} req.params.id - The ID of the customer to update.
+ * @param {string} req.params.v - The version of the customer document.
+ * @param {Object} req.body - The request body object.
+ * @param {string} req.body.firstname - The updated first name of the customer.
+ * @param {string} req.body.lastname - The updated last name of the customer.
+ * @param {string} req.body.username - The updated username of the customer.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Object>} Redirects to the updated customer's profile view on success or failure.
+ * @throws {Object} Returns a rendered error page if an invalid ID or version is provided, or if an unexpected error occurs.
+ */
 module.exports.updateCustomerDetails = async (req, res) => {
     const { id, v } = req.params;
     const { firstname, lastname, username } = req.body;
