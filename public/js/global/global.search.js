@@ -8,7 +8,6 @@ const session = url.includes("/views/search/user")
 let user_id = undefined;
 
 //get userId from storage based on the usertype in the url
-console.log(session)
 if (session) {
     user_id = JSON.parse(sessionStorage.getItem(`session-${session}`)) || undefined;
 }
@@ -59,7 +58,6 @@ const handleSearch = () => {
 
     socket.emit('search', { category, searchInput });
     socket.on('searchResults', (searchResults) => {
-        console.log(searchResults)
         renderSearchResults(searchResults.results.data);
         socket.disconnect();
     });

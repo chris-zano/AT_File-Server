@@ -26,7 +26,6 @@ const modeToCollection = { "admin": Admins, "customer": Customers };
  */
 module.exports.recovery_VerifyEmail = async (req, res) => {
     const { email, mode } = req.params;
-    console.log({ email, mode })
 
     if (!email || !mode) {
         return res.status(400).json({ error: "bad request" });
@@ -120,7 +119,6 @@ module.exports.recovery_SetNewPassword = async (req, res) => {
         res.status(200).json({ message: "success" });
 
     } catch (error) {
-        console.log(error)
         logError(error, "/admin/signup/set-password", "setNewAdminPassword");
         return res.status(500).json({ error: "Internal Sserver Error" });
     }

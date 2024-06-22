@@ -37,8 +37,6 @@ const downloadFile = (button) => {
     downloadLink.download = `${filename.replaceAll(" ", "_")}${originalname.substring(originalname.lastIndexOf("."))}`;
     downloadLink.click();
 
-    console.log(downloadLink)
-
     setTimeout(async () => {
         try {
             const url = `/users/add-to-downloads`;
@@ -115,10 +113,8 @@ function renderFileShareForm(id) {
                 .then((response) => {
                     document.getElementById("share-file_form_container").innerHTML = ""
                     document.getElementById("share-file_form_container").style.visibility = "hidden";
-                    console.log(response.json())
 
                     if (response.status === 202) {
-                        console.log("Request accepted for processing (202)");
                         Toast_Notification.showInfo("Email is being queued to be sent");
                     }
                     else {
@@ -128,7 +124,7 @@ function renderFileShareForm(id) {
                             throw new Error(data.message);
                         }
                         else {
-                            console.log(response.json());
+                            return
                         }
                     }
                 })

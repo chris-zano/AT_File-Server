@@ -138,7 +138,6 @@ module.exports.renderUserViews = async (req, res) => {
                 }
             );
         } catch (error) {
-            console.log(error);
             logError(error, req.url, "renderUserViews");
             return res.redirect(`/error/${500}/${req.url}/Internal_server_error`)
         }

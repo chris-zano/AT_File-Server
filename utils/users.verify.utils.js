@@ -88,7 +88,6 @@ module.exports.verifyAdminbyId = async (req, res, next) => {
  * @throws {Error} 500 - Internal server error if session type is neither "admin" nor "user".
  */
 module.exports.verifyUserBySession = (req, res, next) => {
-    console.log("here")
     const { session } = req.params;
 
     if (session === "admin") {

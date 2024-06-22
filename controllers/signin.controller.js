@@ -163,7 +163,7 @@ module.exports.loginHandler = async (req, res) => {
  */
 module.exports.verifyEmail = async (req, res) => {
     const { email } = req.body;
-    const matchUserTypeToDb = { "admins": Admin, "users": Customer };
+    const matchUserTypeToDb = { "admin": Admin, "users": Customer };
 
     if (!email) return res.status(400).json({ id: null, message: "Invalid email" });
 
@@ -276,7 +276,7 @@ const createNewCustomer = async (email, password, salt) => {
  */
 module.exports.setNewPasswordAndCreateUser = async (req, res) => {
     const { email, user_password } = req.body;
-    const matchUserTypeToFunction = { "admins": createNewAdmin, "users": createNewCustomer };
+    const matchUserTypeToFunction = { "admin": createNewAdmin, "users": createNewCustomer };
 
     const userTypeFunction = matchUserTypeToFunction[isUserAdminOrCustomer(req.originalUrl)]
     if (!userTypeFunction) return res.status(400).json({ user: {}, message: "Invalid user" });
@@ -286,13 +286,13 @@ module.exports.setNewPasswordAndCreateUser = async (req, res) => {
 
         if (hashedPassword.error === null) {
             const userData = await userTypeFunction(email, hashedPassword.hashedPassword, hashedPassword.salt);
-            
+
             if (!userData) return res.status(500).json({ message: "An unexpected error occured" });
 
-            return res.status(200).json({ user:userData, message: "Success" });
+            return res.status(200).json({ user: userData, message: "Success" });
         }
         else {
-            console.log("HashPassword Error::// ", hashedPassword.error);
+            logError(new Error("HashPassword Error::// , hashedPassword.error"), req.url, "setNewPasswordAndCreateUser")
             return res.status(400).json({ user: {}, message: "Invalid Password" });
         }
 

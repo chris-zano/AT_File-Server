@@ -3,9 +3,7 @@ const signIn = async (username = "", password = "") => {
     const postSigninURL = '/users/login';
     try {
         const response = await initiatePostRequest(postSigninURL, request_options);
-        console.log(response)
         if (response.status !== 200) {
-            console.log(response);
             Toast_Notification.showError("Invalid username or password");
             return null;
         }
@@ -13,7 +11,6 @@ const signIn = async (username = "", password = "") => {
         return response.doc;
     }
     catch (error) {
-        console.log("Failed to initiate post request: ", error);
         return {}
     }
 
@@ -33,7 +30,6 @@ const signUp = async (email = "") => {
         return response.doc;
     }
     catch (error) {
-        console.log("Failed to initiate post request: ", error);
         return {}
     }
 
@@ -56,7 +52,6 @@ const sendVerificationRequest = async (options = {}) => {
         return response.doc;
     }
     catch (error) {
-        console.log("Failed to initiate post request: ", error);
         return {}
     }
 
@@ -79,7 +74,6 @@ const signupWithEmailAndPassword = async (email, password) => {
         return response.doc;
     }
     catch (error) {
-        console.log("Failed to initiate post request: ", error);
         return {}
     }
 }
@@ -177,7 +171,6 @@ const renderVerificationForm = (codeId) => {
                     return;
                 } catch (error) {
                     console.log(error);
-
                 }
 
 
@@ -202,7 +195,6 @@ const signinMain = () => {
         const username = getId("username").value;
         const password = getId("password").value;
 
-        // console.log({ username, password });
         const res = await signIn(username, password);
         if (res.message === "success") {
             window.sessionStorage.setItem("user_data", JSON.stringify(res.user));
@@ -224,7 +216,6 @@ const signinMain = () => {
         const email = getId("email").value;
 
         window.sessionStorage.setItem("session_email", JSON.stringify(email));
-        console.log({ email });
         const res = await signUp(email);
 
         renderVerificationForm(res.id);

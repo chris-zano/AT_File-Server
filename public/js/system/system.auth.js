@@ -15,14 +15,9 @@ const auth_main = async () => {
     const userId = JSON.parse(window.sessionStorage.getItem("session-user")) || undefined;
     const adminId = JSON.parse(window.sessionStorage.getItem("session-admin")) || undefined;
 
-    console.log("Userid", userId)
-    console.log("adminId", adminId);
 
     /*
     let response;
-    console.log(userId)
-    console.log(adminId);
-    console.log(userId && adminId)
     if (userId && adminId) {
         window.sessionStorage.clear();
         window.location.href = "/signin";
@@ -33,7 +28,6 @@ const auth_main = async () => {
             response = await verifyUserCredentials(userId, "users");
         }
         else if (!userId && adminId) {
-            console.log("here")
             response = await verifyUserCredentials(adminId, "admins");
         }
         else {

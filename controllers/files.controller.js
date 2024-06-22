@@ -54,7 +54,6 @@ module.exports.serveStyleSheets = (req, res) => {
             const styleSheetFilePath = path.join(__dirname, "..", "public", "css", directory, filename);
 
             if (!(fs.existsSync(styleSheetFilePath))) {
-                console.log(styleSheetFilePath, " does not exist");
                 return res.status(404).end();
             }
 

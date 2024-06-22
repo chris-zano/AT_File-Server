@@ -155,7 +155,6 @@ const queueRequestForProcessisng = (id, user_id, sharedId, validRecipientEmails,
 
             await runUpdates(id, sharedId, user_id, responseFromMailer);
         } catch (error) {
-            console.log(error);
             logError(error, "/users/share-file", "queueRequestForProcessisng");
             try {
                 await file.updateOne(
@@ -163,7 +162,6 @@ const queueRequestForProcessisng = (id, user_id, sharedId, validRecipientEmails,
                     { $set: { "shared.$.status": "failed" } }
                 );
             } catch (updateError) {
-                console.log(updateError);
                 logError(updateError, "Error update mailer status", "queueRequestForProcessisng");
             }
         }

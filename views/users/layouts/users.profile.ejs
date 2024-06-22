@@ -74,10 +74,6 @@
                             const response = await fetch(url);
                             const data = await response.json();
                             const status = response.status;
-
-                            console.log(`Data is :`, data);
-                            console.log(`Status is ${status}`);
-
                             window.alert(data.message);
 
                             //terminate user session

@@ -1,11 +1,8 @@
-const signIn = async (username = "", password = "") => {
+const adminsignIn = async (username = "", password = "") => {
     const request_options = { username, password };
     const postSigninURL = '/admin/login';
     try {
-        const response = await initiatePostRequest(postSigninURL, request_options);
-        console.log(response)
         if (response.status !== 200) {
-            console.log(response);
             Toast_Notification.showError("Invalid username or password");
             return null;
         }
@@ -13,13 +10,12 @@ const signIn = async (username = "", password = "") => {
         return response.doc;
     }
     catch (error) {
-        console.log("Failed to initiate post request: ", error);
         return {}
     }
 
 }
 
-const signUp = async (email = "") => {
+const adminsignUp = async (email = "") => {
     const request_options = { email };
     const postSigninURL = '/admin/signup/initiate';
     try {
@@ -33,7 +29,6 @@ const signUp = async (email = "") => {
         return response.doc;
     }
     catch (error) {
-        console.log("Failed to initiate post request: ", error);
         return {}
     }
 
@@ -56,7 +51,6 @@ const sendVerificationRequest = async (options = {}) => {
         return response.doc;
     }
     catch (error) {
-        console.log("Failed to initiate post request: ", error);
         return {}
     }
 
@@ -79,7 +73,6 @@ const signupWithEmailAndPassword = async (email, password) => {
         return response.doc;
     }
     catch (error) {
-        console.log("Failed to initiate post request: ", error);
         return {}
     }
 }
@@ -177,7 +170,7 @@ const renderVerificationForm = (codeId) => {
                     return;
                 } catch (error) {
                     console.log(error);
-
+                    return
                 }
 
 
@@ -203,14 +196,14 @@ const signinMain = () => {
         const username = getId("username").value;
         const password = getId("password").value;
 
-        const res = await signIn(username, password);
+        const res = await adminsignIn(username, password);
         if (res.message === "success") {
             sessionStorage.setItem("admin_data", JSON.stringify(res.user));
             sessionStorage.setItem("session-admin", JSON.stringify(res.user.id));
             window.location.replace(`/admin/views/dashboard/${res.user.id}`);
         }
         else {
-            console.log(res);
+            return
         }
     });
 
@@ -227,7 +220,7 @@ const signinMain = () => {
         const email = getId("email").value;
 
         window.sessionStorage.setItem("session_email", JSON.stringify(email));
-        const res = await signUp(email);
+        const res = await adminsignUp(email);
 
         renderVerificationForm(res.id);
     });

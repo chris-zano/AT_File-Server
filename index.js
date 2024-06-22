@@ -5,7 +5,7 @@
 
 const express = require('express');
 const http = require('http');
-const logger = require('morgan');
+// const logger = require('morgan');
 const path = require("path");
 const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
@@ -21,7 +21,7 @@ const VIEW_ENGINE_TEMPLATES_PATH = path.join(__dirname, "views");
 //Middleware setup
 app.use(bodyParser.json());
 app.use(express.json());
-app.use(logger('dev'));
+// app.use(logger('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static(STATIC_FILES_PATH));
 
@@ -39,44 +39,44 @@ const databasename = encodeURIComponent(process.env.DATABASE_NAME);
 const uri = `mongodb+srv://${username}:${password}@${clusterName}.jwscxvu.mongodb.net/${databasename}?retryWrites=true&w=majority&appName=${appName}`;
 
 //For local development
-mongoose.connect("mongodb://localhost:27017/at_File_Server").then(() => {
-    console.log("Connected to local");
+// mongoose.connect("mongodb://localhost:27017/at_File_Server").then(() => {
+//     console.log("Connected to local");
 
-    require('./requireStack').callAndExecuteRequireStack(app, server);
+//     require('./requireStack').callAndExecuteRequireStack(app, server);
 
-    const PORT = process.env.PORT || 8080;
+//     const PORT = process.env.PORT || 8080;
 
-    server.listen(PORT, () => {
-        console.log(`App is live at http://localhost:${PORT}`);
+//     server.listen(PORT, () => {
+//         console.log(`App is live at http://localhost:${PORT}`);
 
-    });
-}).catch(console.error);
+//     });
+// }).catch(console.error);
 
 //Connect to Database and start server
-// (async () => {
-//     try {
-//         await mongoose.connect(uri);
-//         console.log('Connected to MongoDB Atlas');
+(async () => {
+    try {
+        await mongoose.connect(uri);
+        console.log('Connected to MongoDB Atlas');
 
-//         // Call and execute require stack
-//         require('./requireStack').callAndExecuteRequireStack(app, server);
+        // Call and execute require stack
+        require('./requireStack').callAndExecuteRequireStack(app, server);
 
-//         const PORT = process.env.PORT || 8080;
-//         server.listen(PORT, () => {
-//             console.log(`App is live at http://localhost:${PORT}`);
-//         });
+        const PORT = process.env.PORT || 8080;
+        server.listen(PORT, () => {
+            console.log(`App is live at http://localhost:${PORT}`);
+        });
 
-//     } catch (error) {
-//         console.error('Error connecting to MongoDB Atlas: ');
-//         //connect to local database if present
-//         mongoose.connect("mongodb://localhost:27017/at_File_Server").then(() => {
-//             console.log("Connected to local");
-//             require('./requireStack').callAndExecuteRequireStack(app);
-//             const PORT = process.env.PORT || 8080;
-//             app.listen(PORT, () => {
-//                 console.log(`App is live at http://localhost:${PORT}`);
-//             });
-//         }).catch(console.error);
-//     }
-// })();
+    } catch (error) {
+        console.error('Error connecting to MongoDB Atlas: ');
+        //connect to local database if present
+        // mongoose.connect("mongodb://localhost:27017/at_File_Server").then(() => {
+        //     console.log("Connected to local");
+        //     require('./requireStack').callAndExecuteRequireStack(app);
+        //     const PORT = process.env.PORT || 8080;
+        //     app.listen(PORT, () => {
+        //         console.log(`App is live at http://localhost:${PORT}`);
+        //     });
+        // }).catch(console.error);
+    }
+})();
 

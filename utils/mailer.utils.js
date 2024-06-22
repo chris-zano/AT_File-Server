@@ -33,13 +33,11 @@ const system_email = "no-reply.atfs@hotmail.com";
  * @returns {Promise<Object>} A promise that resolves to the email response.
  */
 const transportMail = async (options) => {
-    // const response = await transporter.sendMail(options); //old code
-    // return response;
 
     // fork a child process and parse the options as argument
     return new Promise((resolve, reject) => {
         const child = fork(path.join(__dirname, 'process.mailer.utils.js'))
-        // console.log("A new child process has been forked with pid of: ", child.pid);
+        console.log("A new child process has been forked with pid of: ", child.pid);
 
         child.send(options);
 
@@ -89,14 +87,12 @@ module.exports.sendVerificationCode = async (recipient_email, verificationCode, 
 
     try {
         transportMail(options).then(async (response) => {
-            // console.log(`Response from mailer is : `, response)
             if (response.accepted.length != 0 && response.rejected.length === 0) {
                 try {
                     const new_code_entry = new Code({ recipient_email: response.accepted[0], code: verificationCode, tempId: tempId });
                     await new_code_entry.save();
                 }
                 catch(error) {
-                    console.log("Error saving code: ", error)
                     return {
                         operationStatus: "Failed",
                         message: error,
@@ -105,11 +101,7 @@ module.exports.sendVerificationCode = async (recipient_email, verificationCode, 
                 }
             }
             else {
-                console.log({
-                    operationStatus: "Failed",
-                    message: "Email address is invalid",
-                    accepted: []
-                });
+               
                 return {
                     operationStatus: "Failed",
                     message: "Email address is invalid",
@@ -117,12 +109,7 @@ module.exports.sendVerificationCode = async (recipient_email, verificationCode, 
                 }
             }
         }).catch((error) => {
-            console.log({
-                operationStatus: "Failed",
-                message: "Failed to send email",
-                accepted: []
-            });
-            console.log("Catch error::// ", error)
+            console.log(error)
             return {
                 operationStatus: "Failed",
                 message: error,

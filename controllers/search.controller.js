@@ -61,7 +61,6 @@ module.exports.renderResultPage = async (req, res) => {
             files: files
         });
     } catch (error) {
-        console.log(error);
         logError(error, req.url, "renderUserViews");
         return res.redirect(`/error/${500}/${url}/Internal_server_error`)
     }

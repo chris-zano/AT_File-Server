@@ -82,7 +82,6 @@ const setupWebSocketServer = (server) => {
         console.log('Socket.IO client connected');
 
         socket.on('search', async (input) => {
-            console.log('Received search request from client:', input);
             //handle search input
             const searchResults = await handleSearchInputFromClient(input);
             socket.emit("searchResults", { type: "results", results: searchResults });
