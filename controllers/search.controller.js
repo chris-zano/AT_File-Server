@@ -3,6 +3,16 @@ const { logError } = require("../utils/logs.utils");
 
 const file = Files();
 
+/**
+ * Renders the search page based on user session.
+ *
+ * @function renderSearchPage
+ * @param {Object} req - The request object.
+ * @param {Object} req.verifiedUser - The verified user object from the request.
+ * @param {string} req.params.session - The session type ("user" or "admin").
+ * @param {Object} res - The response object.
+ * @returns {void}
+ */
 module.exports.renderSearchPage = (req, res) => {
     const user = req.verifiedUser;
     let session = req.params.session === "user" ? "users": req.params.session;
@@ -15,6 +25,18 @@ module.exports.renderSearchPage = (req, res) => {
     });
 }
 
+/**
+ * Renders the search result page based on user session and file ID.
+ *
+ * @async
+ * @function renderResultPage
+ * @param {Object} req - The request object.
+ * @param {Object} req.verifiedUser - The verified user object from the request.
+ * @param {string} req.params.session - The session type ("user" or "admin").
+ * @param {string} req.params.file_id - The ID of the file to render results for.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>}
+ */
 module.exports.renderResultPage = async (req, res) => {
     const user = req.verifiedUser;
     let session = req.params.session === "user" ? "users": req.params.session;
