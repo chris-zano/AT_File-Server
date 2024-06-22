@@ -1,3 +1,7 @@
+/**
+ * @module recoveryController
+ */
+
 const { Admins, Codes, Customers } = require("../utils/db.exports.utils");
 const { logSession, logError } = require("../utils/logs.utils");
 const { sendVerificationCode, emailRegexp } = require("../utils/mailer.utils");
@@ -7,6 +11,19 @@ const email_Regex = emailRegexp();
 const Code = Codes();
 const modeToCollection = { "admin": Admins, "customer": Customers };
 
+
+/**
+ * Verifies the email during the recovery process for admin or customer.
+ *
+ * @async
+ * @function recovery_VerifyEmail
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The request parameters.
+ * @param {string} req.params.email - The email to verify.
+ * @param {string} req.params.mode - The mode indicating whether the user is an admin or a customer.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>}
+ */
 module.exports.recovery_VerifyEmail = async (req, res) => {
     const { email, mode } = req.params;
     console.log({ email, mode })
@@ -42,6 +59,19 @@ module.exports.recovery_VerifyEmail = async (req, res) => {
     }
 }
 
+/**
+ * Verifies the code during the recovery process.
+ *
+ * @async
+ * @function recovery_VerifyCode
+ * @param {Object} req - The request object.
+ * @param {Object} req.query - The request query parameters.
+ * @param {string} req.query.cid - The code ID.
+ * @param {string} req.query.code - The verification code.
+ * @param {string} req.query.email - The email associated with the code.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>}
+ */
 module.exports.recovery_VerifyCode = async (req, res) => {
     const { cid, code, email } = req.query;
 
@@ -58,6 +88,20 @@ module.exports.recovery_VerifyCode = async (req, res) => {
     }
 }
 
+/**
+ * Sets a new password during the recovery process for admin or customer.
+ *
+ * @async
+ * @function recovery_SetNewPassword
+ * @param {Object} req - The request object.
+ * @param {Object} req.body - The request body.
+ * @param {string} req.body.email - The email for which the password is being reset.
+ * @param {string} req.body.password - The new password.
+ * @param {Object} req.params - The request parameters.
+ * @param {string} req.params.mode - The mode indicating whether the user is an admin or a customer.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>}
+ */
 module.exports.recovery_SetNewPassword = async (req, res) => {
     const { email, password } = req.body;
     const { mode } = req.params
