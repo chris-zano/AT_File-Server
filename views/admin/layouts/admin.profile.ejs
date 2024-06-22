@@ -22,7 +22,7 @@
 
                     const updatePPForm = document.createElement("form");
                     updatePPForm.method = "post";
-                    updatePPForm.action = `/admins/profile/update-component/profile-picture/${id}/${oldProfilePictureFilename}`;
+                    updatePPForm.action = `/admin/profile/update-component/profile-picture/${id}/${oldProfilePictureFilename}`;
                     updatePPForm.enctype = "multipart/form-data";
                     updatePPForm.innerHTML = `
                                     <input type="file" name="profile_picture" required="true" id="file-input" />
@@ -58,7 +58,7 @@
                         usernameContainer.innerText = "";
 
                         const updateUsernameForm = document.createElement("form");
-                        updateUsernameForm.action = `/admins/profile/update-component/username/${id}/<%= v%>`;
+                        updateUsernameForm.action = `/admin/profile/update-component/username/${id}/<%= v%>`;
                         updateUsernameForm.method = "post";
                         updateUsernameForm.innerHTML = `
                                     <label for='username'>Enter a new username</label>

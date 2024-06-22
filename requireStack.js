@@ -18,8 +18,7 @@ module.exports.callAndExecuteRequireStack = (app, server) => {
      const adminRoutes = require('./routes/admin.routes');
      const customerViewRoutes = require('./routes/customer-view.routes');
      const fileRoutes = require('./routes/files.routes');
-     const AdminSigninRoutes = require("./routes/admin-signin.routes");
-     const CustomerSigninRoutes = require("./routes/customer-signin.routes");
+     const signinRoutes = require("./routes/signin.routes");
      const authRoutes = require('./routes/auth.routes');
      const recoveryRoutes = require('./routes/recovery.routes');
      const userRoutes = require('./routes/user.routes');
@@ -32,8 +31,7 @@ module.exports.callAndExecuteRequireStack = (app, server) => {
      app.use(adminRoutes);
      app.use(customerViewRoutes);
      app.use(fileRoutes);
-     app.use(AdminSigninRoutes);
-     app.use(CustomerSigninRoutes);
+     app.use(signinRoutes);
      app.use(recoveryRoutes);
      app.use(userRoutes);
      app.use(searchRoutes);

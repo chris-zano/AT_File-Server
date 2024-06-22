@@ -33,8 +33,8 @@ const dynamicMulterMiddleware = (req, res, next) => {
     upload.single("fileUpload")(req, res, next);
 };
 
-router.post("/admins/profile/update-component/profile-picture/:id/:old_filename/", verifyAdminbyId, profilePicUploadsPath.single("profile_picture"), updateProfilePicture);
-router.post("/admins/profile/update-component/username/:id/:v", verifyAdminbyId, updateAdminUsername);
+router.post("/admin/profile/update-component/profile-picture/:id/:old_filename/", verifyAdminbyId, profilePicUploadsPath.single("profile_picture"), updateProfilePicture);
+router.post("/admin/profile/update-component/username/:id/:v", verifyAdminbyId, updateAdminUsername);
 router.post("/admin/store/uploads/:visibility/:fileType/:id", verifyAdminbyId, dynamicMulterMiddleware, uploadStoreFile);
 
 router.post("/admin/edit-file-contents/:file_id/:id", verifyAdminbyId, updateFileContents);

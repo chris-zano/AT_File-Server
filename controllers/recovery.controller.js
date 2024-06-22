@@ -2,22 +2,10 @@ const { Admins, Codes, Customers } = require("../utils/db.exports.utils");
 const { logSession, logError } = require("../utils/logs.utils");
 const { sendVerificationCode, emailRegexp } = require("../utils/mailer.utils");
 const { hashPassword, comparePassword } = require("../utils/password.utils");
+const { generateVerificationCode, generateTempId, matchBaseStringToSubstring } = require("./controller.utils");
 const email_Regex = emailRegexp();
 const Code = Codes();
 const modeToCollection = { "admin": Admins, "customer": Customers };
-const crypto = require('crypto');
-const randomstring = require("randomstring");
-
-const generateTempId = () => {
-    return crypto.randomUUID();
-}
-
-const generateVerificationCode = () => {
-    return randomstring.generate({
-        length: 6,
-        charset: 'alphanumeric'
-    });
-}
 
 module.exports.recovery_VerifyEmail = async (req, res) => {
     const { email, mode } = req.params;
@@ -49,7 +37,7 @@ module.exports.recovery_VerifyEmail = async (req, res) => {
         await sendVerificationCode(email, verificationCode, tempId);
 
     } catch (error) {
-        logError(error, "/admins/signup/initiate", "verifyEmail");
+        logError(error, "/admin/signup/initiate", "verifyEmail");
         return res.status(500).json({ error: "Failed to send verification code" });
     }
 }
@@ -89,7 +77,7 @@ module.exports.recovery_SetNewPassword = async (req, res) => {
 
     } catch (error) {
         console.log(error)
-        logError(error, "/admins/signup/set-password", "setNewAdminPassword");
+        logError(error, "/admin/signup/set-password", "setNewAdminPassword");
         return res.status(500).json({ error: "Internal Sserver Error" });
     }
 }

@@ -1,6 +1,6 @@
 const signIn = async (username = "", password = "") => {
     const request_options = { username, password };
-    const postSigninURL = '/admins/login';
+    const postSigninURL = '/admin/login';
     try {
         const response = await initiatePostRequest(postSigninURL, request_options);
         console.log(response)
@@ -21,7 +21,7 @@ const signIn = async (username = "", password = "") => {
 
 const signUp = async (email = "") => {
     const request_options = { email };
-    const postSigninURL = '/admins/signup/initiate';
+    const postSigninURL = '/admin/signup/initiate';
     try {
         const response = await initiatePostRequest(postSigninURL, request_options);
         if (response.status !== 202) {
@@ -42,7 +42,7 @@ const signUp = async (email = "") => {
 
 const sendVerificationRequest = async (options = {}) => {
     const request_options = options;
-    const postSigninURL = '/admins/signup/verify-code';
+    const postSigninURL = '/admin/signup/verify-code';
     try {
         const response = await initiatePostRequest(postSigninURL, request_options);
         if (response.status === 409) {
@@ -64,7 +64,7 @@ const sendVerificationRequest = async (options = {}) => {
 
 const signupWithEmailAndPassword = async (email, password) => {
     const request_options = { email, user_password: password };
-    const postSigninURL = '/admins/signup/set-password';
+    const postSigninURL = '/admin/signup/set-password';
     try {
         const response = await initiatePostRequest(postSigninURL, request_options);
         if (response.status === 400) {
