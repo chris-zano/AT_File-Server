@@ -61,7 +61,7 @@ const fileSchema = new Schema({
     visibility: String,
     type: {
         type: String,
-        enum: ['Image File', 'PDF document', 'Word Document'],
+        enum: ['Image File', 'PDF Document', 'Word Document'],
         required: true
     }
 }, {
