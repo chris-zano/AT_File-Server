@@ -114,3 +114,7 @@ SUCCESS//:: Saturday,22nd-June-2024 at 17:02:29 - Username:{atfs-admin}, IP:= {:
 FAILED//:: Saturday,22nd-June-2024 at 17:34:15 - Username:{atfs-admin}, IP:= {::ffff:127.0.0.1}
 FAILED//:: Saturday,22nd-June-2024 at 17:34:24 - Username:{atfs-admin}, IP:= {::ffff:127.0.0.1}
 SUCCESS//:: Saturday,22nd-June-2024 at 17:42:42 - Username:{oswaldo}, IP:= {::ffff:127.0.0.1}
+SUCCESS//:: Sunday,23rd-June-2024 at 21:49:47 - Username:{atfs-admin}, IP:= {::ffff:127.0.0.1}
+FAILED//:: Sunday,23rd-June-2024 at 22:32:45 - Username:{oswaldo}, IP:= {::1}
+FAILED//:: Sunday,23rd-June-2024 at 22:33:13 - Username:{clearcapdev}, IP:= {::1}
+SUCCESS//:: Sunday,23rd-June-2024 at 22:33:21 - Username:{clearcapdev}, IP:= {::1}

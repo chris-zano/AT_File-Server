@@ -3,11 +3,44 @@ const adminsModel = require('../models/admins.model');
 const customersModel = require('../models/customers.model');
 const codesModel = require('../models/codes.model');
 const { logError } = require('../utils/logs.utils');
-const { verifyAdminbyId } = require('../utils/users.verify.utils');
 const { alertUserOfPasswordResetAttempt, informUserOfSuccessfulPasswordReset, emailRegexp } = require('../utils/mailer.utils');
 const { hashPassword, comparePassword } = require('../utils/password.utils');
+const { isValidObjectId, default: mongoose } = require('mongoose');
 const router = express.Router();
 
+/**
+ * Verifies an admin
+ * @param {mongoose.ObjectId} id 
+ * @returns {object|null} match | null
+ */
+const verifyAdmin = async (id) => {
+    if (!isValidObjectId(id)) return null;
+
+    try {
+        const adminMatch = await adminsModel.findById(id);
+        return adminMatch;
+    } catch (error) {
+        logError(error, "verify-admin", "verifyAdmin")
+        return null;
+    }
+}
+
+/**
+ * Verifies a customer
+ * @param {mongoose.ObjectId} id 
+ * @returns {object|null} match | null
+ */
+const verifyCustomer = async (id) => {
+    if (!isValidObjectId(id)) return null;
+
+    try {
+        const customerMatch = await customersModel.findById(id);
+        return customerMatch;
+    } catch (error) {
+        logError(error, "verify-customer", "verifyCustomer")
+        return null;
+    }
+}
 /**
  * Handle verification of user permissions and ID.
  *
@@ -18,46 +51,26 @@ const router = express.Router();
  */
 router.get("/system/verify-user/:permissions/:id", async (req, res) => {
     const { permissions, id } = req.params;
+    const permissionsActionMap = { "admins": verifyAdmin, "users": verifyCustomer };
 
-    if (!permissions || !id) {
-        res.status(400).json({ messaage: "Invalid request" });
-        return;
+
+    if (!permissions || !id || !permissionsActionMap[permissions]) {
+        return res.set("Cache-Control", "public, max-age=3600").status(400).json({ message: "Invalid request" });
     }
 
-    if (permissions === "admins") {
-        try {
-            const isAdmin = await adminsModel.findOne({ _id: id });
-            if (isAdmin) {
-                res.set("Cache-Control", "public, max-age=3600");
-                return res.status(200).json({ message: "valid admin" });
-            }
-            else {
-                res.set("Cache-Control", "public, max-age=3600");
-                return res.status(404).json({ message: "user not found" });
-            }
+    try {
+        const validUserObject = await permissionsActionMap[permissions](id);
+
+        if (!validUserObject) {
+            return res.set("Cache-Control", "public, max-age=3600").status(404).json({ message: "user not found" });
         }
-        catch (error) {
-            logError(error, `/system/verify-user/${req.params.permissions}/${req.params.id}`, `router.get(req, res)`);
-            return res.render("error", { code: "500", message: "The system failed to verify your credentials" });
-        }
+
+        return res.set("Cache-Control", "public, max-age=3600").status(200).json({ message: "valid user" });
+
     }
-
-    else if (permissions === "users") {
-        const isCustomer = await customersModel.findOne({ _id: id });
-
-        if (isCustomer) {
-            res.set("Cache-Control", "public, max-age=3600");
-            return res.status(200).json({ message: "valid customer" });
-        }
-
-        else {
-            res.set("Cache-Control", "public, max-age=3600");
-            return res.status(404).json({ message: "user not found" });
-        }
-    }
-
-    else {
-        return res.status(500).json("Internal Server Error");
+    catch (error) {
+        logError(error, `/system/verify-user/${req.params.permissions}/${req.params.id}`, `router.get(req, res)`);
+        return res.render("error", { code: "500", message: "The system failed to verify your credentials" });
     }
 });
 
@@ -126,7 +139,7 @@ router.get('/sessions/:user_permission/password-reset', async (req, res) => {
         const doc = await userPermissionMatch(uid, uemail);
 
         if (!doc) return res.status(403).render("error", { code: 403, message: `Operation requires authentication` });
-        
+
         res.status(200).json({ message: "A password reset link has been sent to your email." });
 
         return await alertUserOfPasswordResetAttempt(doc.verified_user.email, doc.verified_user.username, doc.verified_user._id, user_permission === "admin" ? "system-undefined" : "system-not-null");

@@ -3,40 +3,36 @@ const verifyUserCredentials = async (user_id, permissions) => {
 
     try {
         const data = await fetch(url);
-        return await data.json();
+        return { status: data.status, doc: await data.json() };
     } catch (error) {
         window.location.replace(`/error/400/${encodeURIComponent(url)}/${encodeURIComponent(error)}`);
     }
-
-    return;
+    return
 }
 
 const auth_main = async () => {
     const userId = JSON.parse(window.sessionStorage.getItem("session-user")) || undefined;
     const adminId = JSON.parse(window.sessionStorage.getItem("session-admin")) || undefined;
-
-
-    /*
-    let response;
+    
+    
     if (userId && adminId) {
+        window.alert("Session expired, redirecting to signin");
         window.sessionStorage.clear();
-        window.location.href = "/signin";
+        return window.location.href = "/";
+    }
+    
+    let response;
+    if (userId) {
+        response = await verifyUserCredentials(userId, "users");
+    } else if (adminId) {
+        response = await verifyUserCredentials(adminId, "admins");
     }
 
-    else {
-        if (userId && !adminId) {
-            response = await verifyUserCredentials(userId, "users");
-        }
-        else if (!userId && adminId) {
-            response = await verifyUserCredentials(adminId, "admins");
-        }
-        else {
-            window.sessionStorage.clear();
-            window.location.href = "/admin/signin";
-        }
+    if (response.status == 400 || response.status == 404) {
+        window.alert("Session expired, redirecting to signin");
+        window.sessionStorage.clear();
+        return window.location.href = '/';
     }
-    */
-
 }
 
 document.addEventListener("DOMContentLoaded", auth_main);

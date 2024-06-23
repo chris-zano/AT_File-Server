@@ -38,6 +38,6 @@ router.post("/admin/profile/update-component/username/:id/:v", verifyAdminbyId, 
 router.post("/admin/store/uploads/:visibility/:fileType/:id", verifyAdminbyId, dynamicMulterMiddleware, uploadStoreFile);
 
 router.post("/admin/edit-file-contents/:file_id/:id", verifyAdminbyId, updateFileContents);
-router.get("/admin/delete-file/:file_id/:id", verifyAdminbyId, deleteOneFile);
+router.get("/admin/delete-file/:id/", verifyAdminbyId, deleteOneFile);
 
 module.exports = router;
