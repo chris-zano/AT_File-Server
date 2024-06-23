@@ -15,7 +15,7 @@ const EMAIL_AUTH = getEmailAuthCredentials();
 process.on('message', async (options) => {
     try {
         const transporter = nodemailer.createTransport({
-            service: "hotmail",
+            service: "gmail",
             auth: { ...EMAIL_AUTH }
         });
 
