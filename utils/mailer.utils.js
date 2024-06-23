@@ -5,7 +5,6 @@
 
 const path = require('path')
 const { createEmailTemplateForVerificationCode, createEmailTemplateForPasswordResetAttempt, createEmailTemplateForPasswordResetConfirmation, createEmailTemplateForFileSharing } = require("./email_template.utils");
-const { getEmailAuthCredentials } = require('../requireStack');
 const { logError } = require("./logs.utils");
 const { fork } = require('child_process');
 const codesModel = require('../models/codes.model');
@@ -22,7 +21,7 @@ module.exports.emailRegexp = () => {
     return EMAIL_REGEXP;
 }
 
-const system_email = getEmailAuthCredentials().user || "niicodes.teamst0199@gmail.com";
+const system_email = "niicodes.teamst0199@gmail.com";
 
 /**
  * Sends an email using a child process.
