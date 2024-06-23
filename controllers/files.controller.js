@@ -26,7 +26,7 @@ module.exports.serveScripts = (req, res) => {
             }
 
             res.type("text/javascript");
-            res.set("Cache-Control", "public, max-age=60");
+            res.set("Cache-Control", "public, max-age=86400");
             res.status(200);
             return fs.createReadStream(scriptFilePath).pipe(res);
         }
@@ -58,7 +58,7 @@ module.exports.serveStyleSheets = (req, res) => {
             }
 
             res.type("css");
-            res.set("Cache-Control", "public, max-age=60");
+            res.set("Cache-Control", "public, max-age=86400");
             res.status(200);
             return fs.createReadStream(styleSheetFilePath).pipe(res);
         }
@@ -146,7 +146,7 @@ module.exports.serveSystemImages = (req, res) => {
                 return res.status(404)
             }
 
-            res.set('Cache-Control', 'public, max-age=60');
+            res.set('Cache-Control', 'public, max-age=86400');
             res.type('png');
             return fs.createReadStream(systemImagesFilePath).pipe(res);
         }
@@ -179,7 +179,7 @@ module.exports.serveUserProfilePictures = (req, res) => {
                 return fs.createReadStream(DEFAULT_PROFILE_IMAGE).pipe(res);
             }
 
-            res.set('Cache-Control', 'public, max-age=60');
+            res.set('Cache-Control', 'public, max-age=86400');
             res.type('png');
             res.status(200);
             return fs.createReadStream(userImagePath).pipe(res);
@@ -213,7 +213,7 @@ module.exports.serveStoreImages = (req, res) => {
                 return fs.createReadStream(DEFAULT_PROFILE_IMAGE).pipe(res);
             }
 
-            res.set('Cache-Control', 'public, max-age=60');
+            res.set('Cache-Control', 'public, max-age=86400');
             res.type('png');
             res.status(200);
             return fs.createReadStream(filePath).pipe(res);
@@ -247,7 +247,7 @@ module.exports.serveStorePDF = (req, res) => {
                 return fs.createReadStream(DEFAULT_PROFILE_IMAGE).pipe(res);
             }
 
-            res.set('Cache-Control', 'public, max-age=60');
+            res.set('Cache-Control', 'public, max-age=86400');
             res.type('application/pdf');
             res.status(200);
             return fs.createReadStream(filePath).pipe(res);
@@ -280,7 +280,7 @@ module.exports.serveStoreWordDoc = (req, res) => {
                 return fs.createReadStream(DEFAULT_PROFILE_IMAGE).pipe(res);
             }
 
-            res.set('Cache-Control', 'public, max-age=60');
+            res.set('Cache-Control', 'public, max-age=86400');
             res.type('application/vnd.openxmlformats-officedocument.wordprocessingml.document');
             res.status(200);
             return fs.createReadStream(filePath).pipe(res);
