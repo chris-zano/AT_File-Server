@@ -47,7 +47,7 @@ const uri = `mongodb+srv://${username}:${password}@${clusterName}.jwscxvu.mongod
 //     const PORT = process.env.PORT || 8080;
 
 //     server.listen(PORT, () => {
-//         console.log(`App is live at http://localhost:${PORT}`);
+//         console.log(`App is live at https://at-file-server.onrender.com/`);
 
 //     });
 // }).catch(console.error);
@@ -63,7 +63,7 @@ const uri = `mongodb+srv://${username}:${password}@${clusterName}.jwscxvu.mongod
 
         const PORT = process.env.PORT || 8080;
         server.listen(PORT, () => {
-            console.log(`App is live at http://localhost:${PORT}`);
+            console.log(`App is live at https://at-file-server.onrender.com/`);
         });
 
     } catch (error) {
@@ -74,7 +74,7 @@ const uri = `mongodb+srv://${username}:${password}@${clusterName}.jwscxvu.mongod
         //     require('./requireStack').callAndExecuteRequireStack(app);
         //     const PORT = process.env.PORT || 8080;
         //     app.listen(PORT, () => {
-        //         console.log(`App is live at http://localhost:${PORT}`);
+        //         console.log(`App is live at https://at-file-server.onrender.com/`);
         //     });
         // }).catch(console.error);
     }

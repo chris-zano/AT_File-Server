@@ -145,7 +145,7 @@ function createEmailTemplateForPasswordResetAttempt(recipient_email, username, u
                 <p>Hello ${username},</p>
                 <p>We received a request to reset your password for yout AT File Server account with email ${recipient_email}</p>
                 <p>Click the button below to reset it.</p>
-                <a href="http://localhost:3300/sessions/reset-user-password/${encodeURIComponent(admin)}/${encodeURIComponent(userId)}" class="button" >Reset Password</a>
+                <a href="https://at-file-server.onrender.com/sessions/reset-user-password/${encodeURIComponent(admin)}/${encodeURIComponent(userId)}" class="button" >Reset Password</a>
                 <p>If you did not request a password reset, please ignore this email or contact support if you have any questions.</p>
                 <p>Thank you,<br>AT-File Server</p>
             </div>
@@ -229,16 +229,16 @@ function createEmailTemplateForPasswordResetConfirmation () {
         <body>
             <div class="container">
                 <div class="header">
-                    <img src="http://localhost:3300/files/favicon" alt="Our Logo">
+                    <img src="https://at-file-server.onrender.com/files/favicon" alt="Our Logo">
                 </div>
                 <div class="content">
                     <h1>Password Reset Successful</h1>
                     <p>Hello,</p>
                     <p>Your password has been successfully reset. If you did not request this change, please contact our support team immediately.</p>
-                    <a href="http://localhost:3300/signin" class="button">Login to Your Account</a>
+                    <a href="https://at-file-server.onrender.com/signin" class="button">Login to Your Account</a>
                 </div>
                 <div class="footer">
-                    <p>If you have any questions, feel free to <a href="http://localhost:3300/contact">Contact Us</a>.</p>
+                    <p>If you have any questions, feel free to <a href="https://at-file-server.onrender.com/contact">Contact Us</a>.</p>
                     <p>&copy; 2024 AT File Server. All rights reserved.</p>
                 </div>
             </div>
