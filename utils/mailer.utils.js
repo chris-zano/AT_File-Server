@@ -5,6 +5,7 @@
 
 const path = require('path')
 const { createEmailTemplateForVerificationCode, createEmailTemplateForPasswordResetAttempt, createEmailTemplateForPasswordResetConfirmation, createEmailTemplateForFileSharing } = require("./email_template.utils");
+const { getEmailAuthCredentials } = require('../requireStack');
 const { logError } = require("./logs.utils");
 const { fork } = require('child_process');
 const codesModel = require('../models/codes.model');
@@ -21,7 +22,7 @@ module.exports.emailRegexp = () => {
     return EMAIL_REGEXP;
 }
 
-const system_email = "no-reply.atfs@hotmail.com";
+const system_email = getEmailAuthCredentials().user || "niicodes.teamst0199@gmail.com";
 
 /**
  * Sends an email using a child process.
@@ -93,7 +94,7 @@ module.exports.sendVerificationCode = async (recipient_email, verificationCode, 
                     const new_code_entry = new Code({ recipient_email: response.accepted[0], code: verificationCode, tempId: tempId });
                     await new_code_entry.save();
                 }
-                catch(error) {
+                catch (error) {
                     return {
                         operationStatus: "Failed",
                         message: error,
@@ -102,7 +103,7 @@ module.exports.sendVerificationCode = async (recipient_email, verificationCode, 
                 }
             }
             else {
-               
+
                 return {
                     operationStatus: "Failed",
                     message: "Email address is invalid",
