@@ -1,16 +1,14 @@
-import cluster from "cluster";
-import os from "os";
-import {dirname} from "path";
-import { fileURLToPath } from "url";
+const cluster = require("cluster");
+const os = require("os");
+const path = require("path");
 
-const __dirname =  dirname(fileURLToPath(import.meta.url));
 const cpuCount = os.cpus().length;
 
 console.log(`The total number of cpus is ${cpuCount}.`);
 console.log(`The primary process has a pid of ${process.pid}.`);
 
 cluster.setupPrimary({
-    exec: __dirname + "/index.js"
+    exec: path.join(__dirname, "index.js")
 });
 
 for (let i = 0; i < cpuCount; i++) {
