@@ -64,6 +64,7 @@ const uri = `mongodb+srv://${username}:${password}@${clusterName}.jwscxvu.mongod
         const PORT = process.env.PORT || 8080;
         server.listen(PORT, () => {
             console.log(`App is live at https://at-file-server.onrender.com/`);
+            console.log(`A new worker has started with a pid of ${process.pid}`);
         });
 
     } catch (error) {
