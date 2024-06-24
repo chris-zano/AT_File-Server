@@ -21,6 +21,12 @@ const auth_main = async () => {
         return window.location.href = "/";
     }
     
+    if (!userId && ! adminId) {
+        window.alert("Session expired, redirecting to signin");
+        window.sessionStorage.clear();
+        return window.location.href = "/";
+    }
+    
     let response;
     if (userId) {
         response = await verifyUserCredentials(userId, "users");

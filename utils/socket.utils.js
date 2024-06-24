@@ -61,7 +61,7 @@ const handleSearchInputFromClient = async (input) => {
     const categoryToMethodMap = {
         all: () => runQuery(searchInput),
         images: () => runQuery(searchInput, 'Image File'),
-        pdf: () => runQuery(searchInput, 'PDF document'),
+        pdf: () => runQuery(searchInput, 'PDF Document'),
         doc: () => runQuery(searchInput, 'Word Document')
     };
     const queryMethod = categoryToMethodMap[category];
