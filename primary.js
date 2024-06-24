@@ -6,8 +6,8 @@ import { fileURLToPath } from "url";
 const __dirname =  dirname(fileURLToPath(import.meta.url));
 const cpuCount = os.cpus().length;
 
-console.log(`The total number of cpus is ${cpuCount}`);
-console.log(`The primary process has a pid of ${process.pid}`);
+console.log(`The total number of cpus is ${cpuCount}.`);
+console.log(`The primary process has a pid of ${process.pid}.`);
 
 cluster.setupPrimary({
     exec: __dirname + "/index.js"
