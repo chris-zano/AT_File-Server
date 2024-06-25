@@ -56,7 +56,7 @@ if (cluster.isMaster) {
     //connect to database and start server
     (async () => {
         try {
-            await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+            await mongoose.connect(uri);
             console.log('Connected to MongoDB Atlas');
 
             require('./requireStack').callAndExecuteRequireStack(app, server);
@@ -67,6 +67,7 @@ if (cluster.isMaster) {
                 console.log(`A worker has started with a pid of ${process.pid}`);
             });
 
+            //handle graceful shutdowns
             process.on('SIGTERM', () => {
                 server.close(() => {
                     console.log('Process terminated');
@@ -77,12 +78,13 @@ if (cluster.isMaster) {
                 });
             });
 
-            const limiter = rateLimit({
-                windowMs: 15 * 60 * 1000,
-                max: 100,
-            });
+            //limit the nuber of concurrent requests from a specific ip for a given range
+            // const limiter = rateLimit({
+            //     windowMs: 15 * 60 * 1000,
+            //     max: 100,
+            // });
 
-            app.use(limiter);
+            // app.use(limiter);
 
 
         } catch (error) {

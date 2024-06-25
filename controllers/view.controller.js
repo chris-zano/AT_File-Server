@@ -74,7 +74,7 @@ module.exports.renderAminSigninPage = (req, res) => {
  */
 module.exports.renderAdminViews = async (req, res) => {
     try {
-        const adminDashboardFilesCollection = await File_.find() || [];
+        const adminDashboardFilesCollection = await File_.find({admin_id: req.verifiedUser.id}) || [];
 
         res.type("text/html");
         res.set("Cache-Control", "public, max-age=10");
