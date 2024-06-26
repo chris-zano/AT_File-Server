@@ -45,7 +45,7 @@
                     <button onclick="changePassword(event)" id="password-btn-ch">Change Password</button>
                 </div>
                 <div class="logout">
-                    <button onclick="logOut()" id="logout-btn">Logout</button>
+                    <button onclick="logout()" id="logout-btn">Logout</button>
                 </div>
                 <div class="form-container">
                     <form action="/users/profile/update-component/username/<%= id %>/<%= v %>" method="POST">
@@ -92,7 +92,7 @@
                         catch (error) { console.error };
                     }
 
-                    const logOut = () => {
+                    const logout = () => {
                         window.sessionStorage.clear();
                         window.location.replace("/signin");
                     }

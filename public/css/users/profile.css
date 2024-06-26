@@ -128,3 +128,30 @@ section.section-profile-main {
 .form-container button:hover {
     background-color: #0056b3;
 }
+
+div.logout {
+    width: 100%;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    padding: 1ch;
+}
+
+#logout-btn {
+    width: 120px;
+    margin: auto;
+    padding: 10px;
+    border: none;
+    background-color: var(--accent);
+    color: var(--white);
+    border: 1px solid var(--accent);    
+    color: white;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#logout-btn:hover, #logout-btn:focus {
+    background-color: transparent;
+    color: var(--text);
+}
