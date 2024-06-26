@@ -44,6 +44,9 @@
                 <div class="change-password">
                     <button onclick="changePassword(event)" id="password-btn-ch">Change Password</button>
                 </div>
+                <div class="logout">
+                    <button onclick="logout()" id="logout-btn">Logout</button>
+                </div>
                 <div class="form-container">
                     <form action="/users/profile/update-component/username/<%= id %>/<%= v %>" method="POST">
                         <h1>User Information</h1>
@@ -87,6 +90,11 @@
 
                         }
                         catch (error) { console.error };
+                    }
+
+                    const logout = () => {
+                        window.sessionStorage.clear();
+                        window.location.replace("/signin");
                     }
                 </script>
             </div>

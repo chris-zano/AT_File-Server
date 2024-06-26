@@ -473,3 +473,15 @@ createNewCustomer//:: Saturday,22nd-June-2024 at 17:58:36 - CallingFunction:{cre
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
     at async executeOperation (C:\Users\niico\Code\AmaliTech PreScreen Challenge\Solution\AT_File-Server\node_modules\mongodb\lib\operations\execute_operation.js:136:16)
     at async Collection.insertOne (C:\Users\niico\Code\AmaliTech PreScreen Challenge\Solution\AT_File-Server\node_modules\mongodb\lib\collection.js:155:16)
+/system/verify-user/users/66750a8385a4f907ef0796e4//:: Wednesday,26th-June-2024 at 22:45:09 - CallingFunction:{router.get(/error/:code/:url/:error}, Error Code: {Unknown}, message {undefined}
+ Stack Trace:
+ undefined
+/system/verify-user/users/66750a8385a4f907ef0796e4//:: Wednesday,26th-June-2024 at 22:45:09 - CallingFunction:{router.get(/error/:code/:url/:error}, Error Code: {Unknown}, message {undefined}
+ Stack Trace:
+ undefined
+/system/verify-user/users/66750a8385a4f907ef0796e4//:: Wednesday,26th-June-2024 at 22:45:09 - CallingFunction:{router.get(/error/:code/:url/:error}, Error Code: {Unknown}, message {undefined}
+ Stack Trace:
+ undefined
+/system/verify-user/users/66750a8385a4f907ef0796e4//:: Wednesday,26th-June-2024 at 22:45:10 - CallingFunction:{router.get(/error/:code/:url/:error}, Error Code: {Unknown}, message {undefined}
+ Stack Trace:
+ undefined
