@@ -88,6 +88,9 @@
                 <div class="info">
                     <button onclick="changePassword(event)" id="password-btn-ch">Change Password</button>
                 </div>
+                <div class="info">
+                    <button onclick="logout()" id="logout-btn">Logout</button>
+                </div>
 
                 <script defer>
                     const changePassword = async (event) => {
@@ -112,6 +115,10 @@
 
                         }
                         catch (error) { console.error };
+                    }
+                    const logOut = () => {
+                        window.sessionStorage.clear();
+                        window.location.replace("/signin");
                     }
                     
                 </script>
