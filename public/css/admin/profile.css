@@ -108,3 +108,14 @@ section.section-profile-main {
     background-color: transparent;
     color: var(--text);
 }
+
+#logout-btn {
+    border: 1px solid var(--accent);
+    background-color: transparent;
+    color: var(--text);
+}
+
+#logout-btn:hover, #logout-btn:focus {
+    background-color: var(--accent);
+    color: var(--white);
+}
