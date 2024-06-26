@@ -1,12 +1,10 @@
 {
   "name": "at_file-server",
-  "version": "1.0.0",
+  "version": "0.3.0",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "npx pm2 start ecosystem.config.js",
     "cluster": "node primary.js"
   },
   "keywords": [],
