@@ -39,6 +39,8 @@ const auth_main = async () => {
         window.sessionStorage.clear();
         return window.location.href = '/';
     }
+
+    return;
 }
 
 document.addEventListener("DOMContentLoaded", auth_main);
