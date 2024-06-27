@@ -10,6 +10,13 @@ const verifyUserCredentials = async (user_id, permissions) => {
     return
 }
 
+/**
+ * This function serves as a session manager.
+ * It authentictes customers and admins on every page visit.
+ * it is definitely not the best way to do this, but given the scope of this application,
+ * it should work fine.
+ * @returns undefined | logs the user out if they are not authenticated
+ */
 const auth_main = async () => {
     const userId = JSON.parse(window.sessionStorage.getItem("session-user")) || undefined;
     const adminId = JSON.parse(window.sessionStorage.getItem("session-admin")) || undefined;
