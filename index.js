@@ -79,12 +79,12 @@ if (cluster.isMaster) {
             });
 
             // limit the nuber of concurrent requests from a specific ip for a given range
-            const limiter = rateLimit({
-                windowMs: 15 * 60 * 1000,
-                max: 100,
-            });
+            // const limiter = rateLimit({
+            //     windowMs: 15 * 60 * 1000,
+            //     max: 100,
+            // });
 
-            app.use(limiter);
+            // app.use(limiter);
 
 
         } catch (error) {
@@ -124,5 +124,3 @@ if (cluster.isMaster) {
     //     app.use(limiter);
     // }).catch(console.error);
 }
-
-
