@@ -102,7 +102,7 @@ if (cluster.isMaster) {
         const PORT = process.env.PORT || 8080;
 
         server.listen(PORT, () => {
-            console.log(`App is live at https://at-file-server.onrender.com/`);
+            console.log(`App is live at http://localhost:${PORT}/`);
 
         });
 
