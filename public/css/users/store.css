@@ -121,6 +121,24 @@
     width: 300px;
 }
 
+@media (max-width: 768px) {
+    #share-file_form_container {
+        position: absolute;
+        top: unset;
+        top: 20%;
+        left: unset;
+        margin-inline: auto;
+    }
+
+    #share-file_form_container .form-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+    }
+}
+
 #share-file_form_container h2 {
     margin-bottom: 20px;
     text-align: center;
@@ -132,7 +150,8 @@
     font-weight: bold;
 }
 
-#share-file_form_container form input, form textarea {
+#share-file_form_container form input,
+form textarea {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
