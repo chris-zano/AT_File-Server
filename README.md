@@ -20,6 +20,8 @@ The application is designed to facilitate the sharing of documents via a web pla
   - Upload files with a title and description.
   - View the number of downloads and the number of emails sent for each file.
 
+## Application URL
+The application is live at [AT-File Server](https://at-file-server.onrender.com/)
 ### How to Clone and Get Started
 
 1. **Clone the Repository**:
