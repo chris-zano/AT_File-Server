@@ -59,7 +59,7 @@ module.exports.verifyAdminbyId = async (req, res, next) => {
     try {
         const user = await Admin.findOne({ _id: req.params.id });
         if (!user) {
-            res.status(409);
+            res.status(403);
             res.redirect("/signin");
             return;
         }
