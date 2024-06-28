@@ -77,50 +77,8 @@ if (cluster.isMaster) {
                     });
                 });
             });
-
-            // limit the nuber of concurrent requests from a specific ip for a given range
-            // const limiter = rateLimit({
-            //     windowMs: 15 * 60 * 1000,
-            //     max: 100,
-            // });
-
-            // app.use(limiter);
-
-
         } catch (error) {
             console.error('Error connecting to MongoDB Atlas:', error);
         }
     })();
-
-
-    //For local development
-    // mongoose.connect("mongodb://localhost:27017/at_File_Server").then(() => {
-    //     console.log("Connected to local");
-
-    //     require('./requireStack').callAndExecuteRequireStack(app, server);
-
-    //     const PORT = process.env.PORT || 8080;
-
-    //     server.listen(PORT, () => {
-    //         console.log(`App is live at http://localhost:${PORT}/`);
-
-    //     });
-
-    //     process.on('SIGTERM', () => {
-    //         server.close(() => {
-    //             console.log('Process terminated');
-    //             mongoose.connection.close(false, () => {
-    //                 console.log('MongoDb connection closed.');
-    //                 process.exit(0);
-    //             });
-    //         });
-    //     });
-
-    //     const limiter = rateLimit({
-    //         windowMs: 15 * 60 * 1000,
-    //         max: 100,
-    //     });
-
-    //     app.use(limiter);
-    // }).catch(console.error);
 }

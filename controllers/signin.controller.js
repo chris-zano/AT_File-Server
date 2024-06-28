@@ -208,7 +208,7 @@ module.exports.verifyCode = async (req, res) => {
     try {
         const codeMatch = await Code.findOne({ tempId: codeId, code: user_input });
         if (!codeMatch) {
-            return res.status(409).json({ message: "Invalid Code" });
+            return res.status(404).json({ message: "Invalid Code" });
         }
     }
     catch (error) {
